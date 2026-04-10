@@ -4,7 +4,7 @@ compatibility_date = "2025-12-16"
 type = "javascript"
 
 [build]
-command = "pnpm build"
+command = "bun run build"
 upload = { format = "service-worker" }
 
 [assets]

@@ -1,5 +1,5 @@
 {
-  "name": "@nx-monorepo/portfolio",
+  "name": "@lab/portfolio",
   "type": "module",
   "version": "0.0.1",
   "scripts": {
@@ -12,3 +12,4 @@
     "astro": "^5.16.5"
   }
 }
+

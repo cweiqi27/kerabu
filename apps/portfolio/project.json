@@ -7,19 +7,19 @@
     "dev": {
       "executor": "nx:run-commands",
       "options": {
-        "command": "cd apps/portfolio && pnpm dev"
+        "command": "cd apps/portfolio && bun run dev"
       }
     },
     "build": {
       "executor": "nx:run-commands",
       "options": {
-        "command": "cd apps/portfolio && pnpm build"
+        "command": "cd apps/portfolio && bun run build"
       }
     },
     "preview": {
       "executor": "nx:run-commands",
       "options": {
-        "command": "cd apps/portfolio && pnpm preview"
+        "command": "cd apps/portfolio && bun run preview"
       }
     }
   },
