@@ -4,7 +4,9 @@
   "license": "MIT",
   "scripts": {
     "build": "nx run-many --target=build",
-    "dev:lab": "nx "
+    "dev": "nx run portfolio:dev",
+    "preview": "nx run portfolio:preview",
+    "build:portfolio": "nx run portfolio:build"
   },
   "private": true,
   "packageManager": "bun@1.3.12",
@@ -16,4 +18,3 @@
     "nx": "^22.6.5"
   }
 }
-

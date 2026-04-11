@@ -12,6 +12,7 @@ This document provides guidelines for AI agents operating in this repository.
 ## Build/Lint/Test Commands
 
 ### Root Level Commands
+
 ```bash
 # Build all projects
 bun run build
@@ -22,6 +23,7 @@ bunx nx run-many --target=dev
 ```
 
 ### Portfolio App Commands
+
 ```bash
 # Navigate to the app directory
 cd apps/portfolio
@@ -34,7 +36,9 @@ bun run astro        # Run Astro CLI commands
 ```
 
 ### Running Single Tests
+
 This project uses Astro which doesn't have built-in test infrastructure. If tests are added:
+
 ```bash
 # Vitest
 bun vitest run src/components.test.ts
@@ -46,6 +50,7 @@ bun playwright test src/e2e/spec.spec.ts --project=chromium
 ```
 
 ### Nx Commands
+
 ```bash
 # Affected projects only (faster CI)
 bunx nx affected --target=build
@@ -62,6 +67,7 @@ bunx nx show projects
 ## Code Style Guidelines
 
 ### TypeScript
+
 - **Strict mode is enabled** - all strict checks are on
 - Use explicit types for function parameters and return values
 - Avoid `any` type; use `unknown` when type is truly unknown
@@ -84,6 +90,7 @@ function greet(name: any): any { ... }
 ```
 
 ### Astro Components (.astro files)
+
 - Frontmatter uses standard JavaScript/TypeScript (no `;` at end of statements)
 - Component props defined in frontmatter with TypeScript interfaces
 - Use 2-space indentation for HTML/template content
@@ -114,6 +121,7 @@ const { title, description = 'Default description' } = Astro.props;
 ```
 
 ### File Naming Conventions
+
 - **Astro components**: PascalCase (`Welcome.astro`, `UserCard.astro`)
 - **Layouts**: PascalCase (`Layout.astro`)
 - **Pages**: kebab-case (`index.astro`, `about-us.astro`)
@@ -121,6 +129,7 @@ const { title, description = 'Default description' } = Astro.props;
 - **Directories**: kebab-case (`src/components`, `src/layouts`)
 
 ### Import Conventions
+
 - Astro components: Relative imports
 - Frontmatter: Use relative paths, no `./` prefix not needed within same dir
 - Asset imports: Use `import.meta.url` for asset paths where needed
@@ -135,6 +144,7 @@ import astroLogo from '../assets/astro.svg';
 ```
 
 ### CSS Guidelines
+
 - Use scoped styles within Astro components
 - Follow existing indentation (2 spaces)
 - Use CSS custom properties (variables) for theming
@@ -156,6 +166,7 @@ import astroLogo from '../assets/astro.svg';
 ```
 
 ### Error Handling
+
 - Use try/catch for async operations
 - Provide meaningful error messages
 - Let TypeScript types guide error handling
@@ -168,7 +179,7 @@ try {
   }
   const data = await response.json();
 } catch (error) {
-  console.error('Failed to fetch data:', error);
+  console.error("Failed to fetch data:", error);
   throw error;
 }
 ```
@@ -198,6 +209,7 @@ try {
 ## Common Patterns
 
 ### Astro Props Pattern
+
 ```astro
 ---
 interface Props {
@@ -214,6 +226,7 @@ const { title, items = [] } = Astro.props;
 ```
 
 ### Using Asset Paths
+
 ```astro
 ---
 import image from '../assets/photo.jpg';
@@ -224,6 +237,7 @@ import image from '../assets/photo.jpg';
 ## VSCode Configuration
 
 Recommended extensions (auto-suggested via `.vscode/extensions.json`):
+
 - Astro
 
 ## Notes for Agents
