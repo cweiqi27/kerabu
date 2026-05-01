@@ -1,4 +1,4 @@
-# Agent Guidelines for /workspace/lab
+# Agent Guidelines for /workspace/workshop
 
 This document provides guidelines for AI agents operating in this repository.
 
@@ -187,7 +187,7 @@ try {
 ## Project Structure
 
 ```
-/workspace/lab
+/workspace/workshop
 ├── apps/
 │   └── portfolio/          # Main Astro application
 │       ├── src/

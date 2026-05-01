@@ -1,6 +1,6 @@
 <script lang="ts">
-  let email = $state('');
-  let message = $state('');
+  let email = "hello";
+  let message = $state("");
   let isSubmitted = $state(false);
   let isHovered = $state(false);
 
@@ -11,11 +11,11 @@
 </script>
 
 <a
-  href="mailto:hello@example.com"
+  href="mailto:${email}"
   class="inline-flex items-center gap-3 text-sm tracking-widest uppercase text-accent hover:text-accent/80 transition-colors duration-300"
   style="border-bottom: 1px solid var(--accent); padding-bottom: 4px;"
-  onmouseenter={() => isHovered = true}
-  onmouseleave={() => isHovered = false}
+  onmouseenter={() => (isHovered = true)}
+  onmouseleave={() => (isHovered = false)}
 >
   <span>Say Hello</span>
   <svg
