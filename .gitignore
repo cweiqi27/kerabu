@@ -158,3 +158,16 @@ tmp/
 .nx/polygraph
 .claude/worktrees
 .claude/settings.local.json
+
+# SRT / Anthropic Sandbox Runtime 
+.zshrc
+.zprofile
+.bashrc
+.bash_profile
+.gitconfig
+.gitmodules
+.idea/
+.srt-cache/
+.profile
+.ripgreprc
+.mcp.json
