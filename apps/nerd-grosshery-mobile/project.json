@@ -1,0 +1,68 @@
+{
+  "name": "grosshery-mobile",
+  "$schema": "../../node_modules/nx/schemas/project-schema.json",
+  "sourceRoot": "apps/nerd-grosshery-mobile/src",
+  "projectType": "application",
+  "targets": {
+    "dev": {
+      "executor": "nx:run-commands",
+      "options": {
+        "cwd": "apps/nerd-grosshery-mobile",
+        "command": "bun run dev"
+      }
+    },
+    "build": {
+      "executor": "nx:run-commands",
+      "options": {
+        "cwd": "apps/nerd-grosshery-mobile",
+        "command": "bun run build"
+      },
+      "outputs": ["{projectRoot}/build"]
+    },
+    "preview": {
+      "executor": "nx:run-commands",
+      "options": {
+        "cwd": "apps/nerd-grosshery-mobile",
+        "command": "bun run preview"
+      }
+    },
+    "test": {
+      "executor": "nx:run-commands",
+      "options": {
+        "cwd": "apps/nerd-grosshery-mobile",
+        "command": "bun run test"
+      },
+      "outputs": ["{projectRoot}/coverage"]
+    },
+    "test:unit": {
+      "executor": "nx:run-commands",
+      "options": {
+        "cwd": "apps/nerd-grosshery-mobile",
+        "command": "bun run test:unit"
+      },
+      "outputs": ["{projectRoot}/coverage"]
+    },
+    "lint": {
+      "executor": "nx:run-commands",
+      "options": {
+        "cwd": "apps/nerd-grosshery-mobile",
+        "command": "bun run lint"
+      }
+    },
+    "format": {
+      "executor": "nx:run-commands",
+      "options": {
+        "cwd": "apps/nerd-grosshery-mobile",
+        "command": "bun run format"
+      }
+    },
+    "check": {
+      "executor": "nx:run-commands",
+      "options": {
+        "cwd": "apps/nerd-grosshery-mobile",
+        "command": "bun run check"
+      }
+    }
+  },
+  "tags": ["type:app"]
+}

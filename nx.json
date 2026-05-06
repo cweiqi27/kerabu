@@ -5,8 +5,23 @@
   },
   "workspaceLayout": {
     "appsDir": "apps",
-    "libsDir": "packages"
+    "libsDir": "libs"
   },
-  "analytics": false
+  "analytics": false,
+  "plugins": ["@nx/vite"],
+  "targetDefaults": {
+    "build": {
+      "cacheable": true,
+      "outputs": ["{projectRoot}/dist", "{projectRoot}/build"],
+      "dependsOn": ["^build"]
+    },
+    "test": {
+      "cacheable": true,
+      "outputs": ["{projectRoot}/coverage"]
+    },
+    "lint": { "cacheable": true },
+    "dev": { "cacheable": false },
+    "preview": { "cacheable": false }
+  },
+  "generators": {}
 }
-
