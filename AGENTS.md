@@ -1,4 +1,4 @@
-# Agent Guidelines for /workspace/workshop
+# Agent Guidelines for /workspace/kerabu
 
 This document provides guidelines for AI agents operating in this repository.
 
@@ -187,7 +187,7 @@ try {
 ## Project Structure
 
 ```
-/workspace/workshop
+/workspace/kerabu
 ├── apps/
 │   └── portfolio/          # Main Astro application
 │       ├── src/

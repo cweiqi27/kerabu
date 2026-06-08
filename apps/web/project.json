@@ -1,20 +1,20 @@
 {
-  "name": "grosshery-mobile",
+  "name": "web",
   "$schema": "../../node_modules/nx/schemas/project-schema.json",
-  "sourceRoot": "apps/nerd-grosshery-mobile/src",
+  "sourceRoot": "apps/web/src",
   "projectType": "application",
   "targets": {
     "dev": {
       "executor": "nx:run-commands",
       "options": {
-        "cwd": "apps/nerd-grosshery-mobile",
+        "cwd": "apps/web",
         "command": "bun run dev"
       }
     },
     "build": {
       "executor": "nx:run-commands",
       "options": {
-        "cwd": "apps/nerd-grosshery-mobile",
+        "cwd": "apps/web",
         "command": "bun run build"
       },
       "outputs": ["{projectRoot}/build"]
@@ -22,14 +22,14 @@
     "preview": {
       "executor": "nx:run-commands",
       "options": {
-        "cwd": "apps/nerd-grosshery-mobile",
+        "cwd": "apps/web",
         "command": "bun run preview"
       }
     },
     "test": {
       "executor": "nx:run-commands",
       "options": {
-        "cwd": "apps/nerd-grosshery-mobile",
+        "cwd": "apps/web",
         "command": "bun run test"
       },
       "outputs": ["{projectRoot}/coverage"]
@@ -37,29 +37,36 @@
     "test:unit": {
       "executor": "nx:run-commands",
       "options": {
-        "cwd": "apps/nerd-grosshery-mobile",
+        "cwd": "apps/web",
         "command": "bun run test:unit"
       },
       "outputs": ["{projectRoot}/coverage"]
     },
+    "test:e2e": {
+      "executor": "nx:run-commands",
+      "options": {
+        "cwd": "apps/web",
+        "command": "bun run test:e2e"
+      }
+    },
     "lint": {
       "executor": "nx:run-commands",
       "options": {
-        "cwd": "apps/nerd-grosshery-mobile",
+        "cwd": "apps/web",
         "command": "bun run lint"
       }
     },
     "format": {
       "executor": "nx:run-commands",
       "options": {
-        "cwd": "apps/nerd-grosshery-mobile",
+        "cwd": "apps/web",
         "command": "bun run format"
       }
     },
     "check": {
       "executor": "nx:run-commands",
       "options": {
-        "cwd": "apps/nerd-grosshery-mobile",
+        "cwd": "apps/web",
         "command": "bun run check"
       }
     }

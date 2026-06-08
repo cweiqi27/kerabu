@@ -16,4 +16,4 @@
 ## 3. The "Lab" Registry
 
 - **Discovery:** The portfolio app must dynamically index sub-projects within `apps/` by reading their `project.json` files.
-- **Showcase:** Every workshop project must provide a `manifest.json` describing its tech stack and entry point.
+- **Showcase:** Every kerabu project must provide a `manifest.json` describing its tech stack and entry point.

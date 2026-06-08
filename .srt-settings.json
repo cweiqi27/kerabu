@@ -12,7 +12,7 @@
 			"/etc/ca-certificates/**"
 		],
 		"allowWrite": [".", "/tmp"],
-		"denyWrite": [".env", ".opencode/commands", ".opencode/agents", ".opencode/skills"]
+		"denyWrite": [".env", "/**/.env", ".opencode/commands", ".opencode/agents", ".opencode/skills"]
 	},
 	"network": {
 		"allowedDomains": [
