@@ -1,0 +1,166 @@
+---
+title: Catalog Write Schema
+config:
+  layout: elk
+---
+
+erDiagram
+    products {
+        uuid id PK
+        product_status status
+        text name
+        text quantity_display
+        numeric net_value
+        text net_unit
+        text unit_family
+        text image_url
+        text nutriscore
+        int nova_group
+        timestamp created_at
+        text created_by
+        timestamp updated_at
+        text updated_by
+        timestamp deleted_at
+        text deleted_by
+    }
+
+    categories {
+        uuid id PK
+        category_status status
+        text name
+        uuid parent_id FK
+        timestamp created_at
+        text created_by
+        timestamp updated_at
+        text updated_by
+        timestamp deleted_at
+        text deleted_by
+    }
+
+    providers {
+        uuid id PK
+        text name
+        provider_status status
+        text website_url
+        text logo_url
+        timestamp created_at
+        text created_by
+        timestamp updated_at
+        text updated_by
+        timestamp deleted_at
+        text deleted_by
+    }
+
+    tags {
+        uuid id PK
+        text name UK
+        uuid provider_id FK
+        timestamp created_at
+        text created_by
+        timestamp updated_at
+        text updated_by
+        timestamp deleted_at
+        text deleted_by
+    }
+
+    brands {
+        uuid id PK
+        text name UK
+        brand_status status
+        timestamp created_at
+        text created_by
+        timestamp updated_at
+        text updated_by
+        timestamp deleted_at
+        text deleted_by
+    }
+
+    %% Junction tables
+    product_categories {
+        uuid product_id FK
+        uuid category_id FK
+        timestamp created_at
+        text created_by
+    }
+
+    product_providers {
+        uuid product_id FK
+        uuid provider_id FK
+        timestamp created_at
+        text created_by
+    }
+
+    category_tags {
+        uuid category_id FK
+        uuid tag_id FK
+        timestamp created_at
+        text created_by
+    }
+
+    brand_tags {
+        uuid brand_id FK
+        uuid tag_id FK
+        timestamp created_at
+        text created_by
+    }
+
+    product_brands {
+        uuid product_id FK
+        uuid brand_id FK
+        timestamp created_at
+        text created_by
+    }
+
+    outbox_events {
+        uuid id PK
+        uuid trace_id
+        text event
+        jsonb payload
+        outbox_event_status status
+        int retry_count
+        timestamp created_at
+        text created_by
+        timestamp updated_at
+        text updated_by
+        timestamp deleted_at
+        text deleted_by
+    }
+
+    outbox_archive {
+        uuid id PK
+        uuid outbox_event_id
+        uuid trace_id
+        text event
+        jsonb payload
+        outbox_archive_status status
+        int retry_count
+        timestamp event_created_at
+        text event_created_by
+        timestamp archived_at
+        text archived_by
+    }
+
+    provider_raw_data {
+        uuid id PK
+        text barcode
+        provider_raw_data_status status
+        uuid provider_id FK
+        jsonb raw_data
+        timestamp fetched_at
+        timestamp processed_at
+    }
+
+    %% Relationships
+    categories ||--o{ categories : "parent"
+    products ||--o{ product_categories : ""
+    categories ||--o{ product_categories : ""
+    products ||--o{ product_providers : ""
+    providers ||--o{ product_providers : ""
+    products ||--o{ product_brands : ""
+    brands ||--o{ product_brands : ""
+    categories ||--o{ category_tags : ""
+    tags ||--o{ category_tags : ""
+    brands ||--o{ brand_tags : ""
+    tags ||--o{ brand_tags : ""
+    providers ||--o{ tags : ""
+    providers ||--o{ provider_raw_data : ""
