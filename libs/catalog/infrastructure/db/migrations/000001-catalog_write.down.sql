@@ -21,5 +21,7 @@ DROP TYPE IF EXISTS catalog_write.outbox_archive_status;
 DROP TYPE IF EXISTS catalog_write.outbox_event_status;
 DROP TYPE IF EXISTS catalog_write.category_status;
 DROP TYPE IF EXISTS catalog_write.product_status;
+DROP TYPE IF EXISTS catalog_write.product_visibility;
+DROP TYPE IF EXISTS catalog_write.brand_visibility;
 
 DROP SCHEMA IF EXISTS catalog_write;

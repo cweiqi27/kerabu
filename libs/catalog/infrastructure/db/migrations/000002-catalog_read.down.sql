@@ -1,4 +1,5 @@
-DROP TABLE IF EXISTS catalog_read.view_product_details;
-DROP TABLE IF EXISTS catalog_read.view_product_dashboard;
+DROP TABLE IF EXISTS catalog_read.view_products;
+DROP TABLE IF EXISTS catalog_read.view_brands;
+DROP TABLE IF EXISTS catalog_read.view_categories;
 
-DROP SCHEMA IF EXISTS catalog_read;
+DROP SCHEMA IF EXISTS catalog_read CASCADE;
