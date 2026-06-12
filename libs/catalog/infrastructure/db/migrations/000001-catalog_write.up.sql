@@ -1,10 +1,12 @@
 CREATE SCHEMA IF NOT EXISTS catalog_write;
 
 CREATE TYPE catalog_write.product_status AS ENUM ('inactive', 'active', 'archived');
+CREATE TYPE catalog_write.product_visibility AS ENUM ('official', 'community', 'private');
 CREATE TABLE catalog_write.products (
   id UUID PRIMARY KEY DEFAULT uuidv7(),
   status catalog_write.product_status NOT NULL,
   name TEXT NOT NULL,
+  barcode TEXT,
   quantity_display TEXT NOT NULL,
   net_value NUMERIC(10, 3) NOT NULL,
   net_unit TEXT NOT NULL,
@@ -12,6 +14,8 @@ CREATE TABLE catalog_write.products (
   image_url TEXT,
   nutriscore TEXT,
   nova_group INTEGER,
+  owner_id UUID,
+  visibility catalog_write.product_visibility NOT NULL,
   created_at TIMESTAMP WITH TIME ZONE NOT NULL,
   created_by TEXT NOT NULL,
   updated_at TIMESTAMP WITH TIME ZONE,
@@ -25,7 +29,7 @@ CREATE TABLE catalog_write.categories (
   id UUID PRIMARY KEY DEFAULT uuidv7(),
   status catalog_write.category_status NOT NULL,
   name TEXT NOT NULL,
-  parent_id UUID,
+  parent_id UUID REFERENCES catalog_write.categories(id),
   created_at TIMESTAMP WITH TIME ZONE NOT NULL,
   created_by TEXT NOT NULL,
   updated_at TIMESTAMP WITH TIME ZONE,
@@ -122,11 +126,15 @@ CREATE TABLE catalog_write.outbox_archive (
   archived_by TEXT NOT NULL
 );
 
+CREATE TYPE catalog_write.brand_visibility AS ENUM ('official', 'community', 'private');
 CREATE TYPE catalog_write.brand_status AS ENUM ('inactive', 'active', 'archived');
 CREATE TABLE catalog_write.brands (
   id UUID PRIMARY KEY DEFAULT uuidv7(),
-  name TEXT UNIQUE NOT NULL,
+  name TEXT NOT NULL,
   status catalog_write.brand_status NOT NULL,
+  logo_url TEXT NOT NULL,
+  owner_id UUID,
+  visibility catalog_write.brand_visibility,
   created_at TIMESTAMP WITH TIME ZONE NOT NULL,
   created_by TEXT NOT NULL,
   updated_at TIMESTAMP WITH TIME ZONE,
@@ -165,3 +173,25 @@ CREATE TABLE catalog_write.provider_raw_data (
   fetched_at TIMESTAMP WITH TIME ZONE NOT NULL,
   processed_at TIMESTAMP WITH TIME ZONE
 );
+
+CREATE INDEX idx_products_barcode ON catalog_write.products(barcode);
+
+CREATE INDEX idx_categories_parent_id ON catalog_write.categories(parent_id);
+
+CREATE INDEX idx_product_categories_category_id ON catalog_write.product_categories(category_id);
+
+CREATE INDEX idx_product_providers_provider_id ON catalog_write.product_providers(provider_id);
+
+CREATE INDEX idx_tags_provider_id ON catalog_write.tags(provider_id);
+
+CREATE INDEX idx_category_tags_tag_id ON catalog_write.category_tags(tag_id);
+
+CREATE INDEX idx_brand_tags_tag_id ON catalog_write.brand_tags(tag_id);
+
+CREATE INDEX idx_product_brands_brand_id ON catalog_write.product_brands(brand_id);
+
+CREATE INDEX idx_outbox_events_status_created_at ON catalog_write.outbox_events(status, created_at ASC);
+CREATE INDEX idx_outbox_events_trace_id ON catalog_write.outbox_events(trace_id);
+
+CREATE INDEX idx_provider_raw_data_provider_id_status ON catalog_write.provider_raw_data(provider_id, status);
+CREATE INDEX idx_provider_raw_data_barcode ON catalog_write.provider_raw_data(barcode);
