@@ -1,13 +1,55 @@
-# Agent Guidelines for /workspace/kerabu
+# Agent Guidelines for kerabu
 
 This document provides guidelines for AI agents operating in this repository.
 
 ## Project Overview
 
 - **Type**: Nx monorepo with Bun workspaces
-- **Main Application**: Astro-based portfolio site (`apps/portfolio`)
-- **Package Manager**: Bun (latest)
-- **Language**: TypeScript (strict mode enabled)
+- **Package Manager**: Bun 1.3.13 (managed via Mise)
+- **Go Version**: 1.26.4 (managed via Mise)
+- **Language**: TypeScript (strict mode enabled) + Go
+- **Frontend**: SvelteKit 5 + Tailwind CSS 4 + Vite
+- **Backend**: Go services with Domain-Driven Design (DDD) architecture
+- **Database**: PostgreSQL with golang-migrate migrations
+
+## Applications
+
+### Web (`apps/web`)
+
+- **Stack**: SvelteKit 5, Tailwind CSS 4, Vite, TypeScript
+- **Testing**: Vitest (unit), Playwright (e2e)
+- **Adapter**: Auto (SvelteKit adapter-auto)
+
+### Mobile (`apps/mobile`)
+
+- **Stack**: SvelteKit 5, Tailwind CSS 4, Vite, TypeScript
+- **Testing**: Vitest (unit)
+- **Adapter**: Static (SvelteKit adapter-static)
+
+### Backend Services (`apps/*-service`)
+
+Go-based microservices (currently scaffolded):
+
+- `api-gateway`
+- `catalog-service`
+- `cookbook-service`
+- `identity-service`
+- `inventory-service`
+- `notification-service`
+- `shopping-service`
+
+## Domain Libraries (`libs/*`)
+
+Shared domain logic following DDD layered architecture:
+
+```
+libs/{domain}/
+├── application/      # Use cases and application services
+├── domain/           # Entities, value objects, domain events
+└── infrastructure/   # Repositories, external adapters, migrations
+```
+
+Available libraries: `catalog`, `cookbook`, `identity`, `inventory`, `notification`, `shopping`, `shared`
 
 ## Build/Lint/Test Commands
 
@@ -17,36 +59,57 @@ This document provides guidelines for AI agents operating in this repository.
 # Build all projects
 bun run build
 
-# Run nx commands for the monorepo
-bunx nx run-many --target=build
-bunx nx run-many --target=dev
+# Development (runs in parallel)
+bun run dev
+
+# Run all tests
+bun run test
+
+# Run all lint checks
+bun run lint
 ```
 
-### Portfolio App Commands
+### Web App Commands
 
 ```bash
 # Navigate to the app directory
-cd apps/portfolio
+cd apps/web
 
 # Development
-bun run dev          # Start dev server (http://localhost:4321)
+bun run dev          # Start dev server
 bun run build        # Production build
 bun run preview      # Preview production build
-bun run astro        # Run Astro CLI commands
+
+# Testing
+bun run test         # Run all tests (unit + e2e)
+bun run test:unit    # Run Vitest unit tests
+bun run test:e2e     # Run Playwright e2e tests
+
+# Code quality
+bun run lint         # Run ESLint + Prettier check
+bun run format       # Run Prettier format
+bun run check        # Run SvelteKit type checking
 ```
 
-### Running Single Tests
-
-This project uses Astro which doesn't have built-in test infrastructure. If tests are added:
+### Mobile App Commands
 
 ```bash
-# Vitest
-bun vitest run src/components.test.ts
-bun vitest run --watch  # Watch mode
+# Navigate to the app directory
+cd apps/mobile
 
-# Playwright for e2e tests
-bun playwright test
-bun playwright test src/e2e/spec.spec.ts --project=chromium
+# Development
+bun run dev          # Start dev server
+bun run build        # Production build
+bun run preview      # Preview production build
+
+# Testing
+bun run test         # Run all tests
+bun run test:unit    # Run Vitest unit tests
+
+# Code quality
+bun run lint         # Run ESLint + Prettier check
+bun run format       # Run Prettier format
+bun run check        # Run SvelteKit type checking
 ```
 
 ### Nx Commands
@@ -57,11 +120,42 @@ bunx nx affected --target=build
 bunx nx affected --target=test
 
 # Run specific project
-bunx nx run portfolio:dev
-bunx nx run portfolio:build
+bunx nx run web:dev
+bunx nx run web:build
+bunx nx run mobile:dev
+bunx nx run mobile:build
 
 # List projects
 bunx nx show projects
+```
+
+### Database Migrations
+
+Each domain library has its own migration targets:
+
+```bash
+# Run all migrations
+bun run migrate-up
+
+# Run migrations for a specific domain
+bunx nx run catalog:migrate-up
+bunx nx run identity:migrate-up
+
+# Create a new migration
+bunx nx run catalog:migrate-create --args="--name=add_users_table"
+
+# Rollback migrations
+bunx nx run catalog:migrate-down
+```
+
+### Docker Services
+
+```bash
+# Start PostgreSQL
+docker compose up -d
+
+# Stop PostgreSQL
+docker compose down
 ```
 
 ## Code Style Guidelines
@@ -76,36 +170,35 @@ bunx nx show projects
 ```typescript
 // Good
 function greet(name: string): string {
-  return `Hello, ${name}`;
+  return `Hello, ${name}`
 }
 
 interface User {
-  id: string;
-  name: string;
-  email: string;
+  id: string
+  name: string
+  email: string
 }
 
 // Avoid
 function greet(name: any): any { ... }
 ```
 
-### Astro Components (.astro files)
+### Svelte Components (.svelte files)
 
-- Frontmatter uses standard JavaScript/TypeScript (no `;` at end of statements)
-- Component props defined in frontmatter with TypeScript interfaces
+- Use Svelte 5 runes syntax (`$state`, `$derived`, `$effect`, etc.)
+- Component props defined with TypeScript interfaces
 - Use 2-space indentation for HTML/template content
 - CSS in `<style>` blocks uses 2-space indentation
-- Prefer kebab-case for CSS custom properties
 
-```astro
----
-interface Props {
-  title: string;
-  description?: string;
-}
+```svelte
+<script lang="ts">
+  interface Props {
+    title: string
+    description?: string
+  }
 
-const { title, description = 'Default description' } = Astro.props;
----
+  let { title, description = 'Default description' }: Props = $props()
+</script>
 
 <div class="component">
   <h1>{title}</h1>
@@ -120,50 +213,32 @@ const { title, description = 'Default description' } = Astro.props;
 </style>
 ```
 
+### Go
+
+- Follow standard Go formatting (`gofmt`)
+- Use explicit error handling
+- Domain packages follow DDD: `application/`, `domain/`, `infrastructure/`
+
 ### File Naming Conventions
 
-- **Astro components**: PascalCase (`Welcome.astro`, `UserCard.astro`)
-- **Layouts**: PascalCase (`Layout.astro`)
-- **Pages**: kebab-case (`index.astro`, `about-us.astro`)
+- **Svelte components**: PascalCase (`Welcome.svelte`, `UserCard.svelte`)
+- **Routes**: SvelteKit file-based routing conventions
 - **TypeScript/JS files**: camelCase or kebab-case
-- **Directories**: kebab-case (`src/components`, `src/layouts`)
+- **Go files**: snake_case
+- **Directories**: kebab-case (`src/components`, `src/routes`)
 
 ### Import Conventions
 
-- Astro components: Relative imports
-- Frontmatter: Use relative paths, no `./` prefix not needed within same dir
-- Asset imports: Use `import.meta.url` for asset paths where needed
-- CSS imports: Not needed with Astro's scoped styles
-
-```astro
----
-import Welcome from '../components/Welcome.astro';
-import Layout from '../layouts/Layout.astro';
-import astroLogo from '../assets/astro.svg';
----
-```
+- Svelte components: Relative imports
+- Asset imports: Use standard Vite asset handling
+- Tailwind CSS: Utility classes only, no custom CSS imports needed
 
 ### CSS Guidelines
 
-- Use scoped styles within Astro components
+- Use Tailwind CSS utility classes as primary styling approach
 - Follow existing indentation (2 spaces)
-- Use CSS custom properties (variables) for theming
+- Use CSS custom properties (variables) for theming when needed
 - Prefer flexbox and grid for layouts
-- Use semantic color names when possible
-
-```astro
-<style>
-  :root {
-    --color-primary: #3245ff;
-    --spacing-md: 16px;
-  }
-
-  .container {
-    display: flex;
-    gap: var(--spacing-md);
-  }
-</style>
-```
 
 ### Error Handling
 
@@ -173,85 +248,79 @@ import astroLogo from '../assets/astro.svg';
 
 ```typescript
 try {
-  const response = await fetch(url);
+  const response = await fetch(url)
   if (!response.ok) {
-    throw new Error(`HTTP error! status: ${response.status}`);
+    throw new Error(`HTTP error! status: ${response.status}`)
   }
-  const data = await response.json();
+  const data = await response.json()
 } catch (error) {
-  console.error("Failed to fetch data:", error);
-  throw error;
+  console.error('Failed to fetch data:', error)
+  throw error
 }
 ```
 
 ## Project Structure
 
 ```
-/workspace/kerabu
+kerabu/
 ├── apps/
-│   └── portfolio/          # Main Astro application
-│       ├── src/
-│       │   ├── components/ # Astro components
-│       │   ├── layouts/    # Page layouts
-│       │   ├── pages/      # Routes
-│       │   └── assets/      # Static assets
-│       ├── public/         # Public static files
-│       ├── project.json    # Nx project config
-│       └── astro.config.mjs
-├── packages/               # Shared libraries (if added)
-├── services/               # Backend services (if added)
-├── nx.json                 # Nx configuration
-├── tsconfig.base.json      # Base TypeScript config
-├── bunfig.toml            # Bun configuration
-└── bun.lockb              # Workspace config (auto-generated)
+│   ├── web/                    # SvelteKit web application
+│   │   ├── src/
+│   │   │   ├── routes/        # SvelteKit routes
+│   │   │   └── lib/           # Shared library code
+│   │   ├── static/            # Static assets
+│   │   ├── project.json       # Nx project config
+│   │   └── package.json
+│   ├── mobile/                # SvelteKit mobile application
+│   │   ├── src/
+│   │   │   ├── routes/
+│   │   │   └── lib/
+│   │   ├── static/
+│   │   ├── project.json
+│   │   └── package.json
+│   └── *-service/             # Go backend services (scaffolded)
+├── libs/                       # Shared domain libraries
+│   ├── catalog/
+│   ├── cookbook/
+│   ├── identity/
+│   ├── inventory/
+│   ├── notification/
+│   ├── shopping/
+│   └── shared/
+│       ├── application/       # Use cases
+│       ├── domain/            # Domain models
+│       └── infrastructure/    # DB, external services, migrations
+├── docs/                       # Architecture docs and ERDs
+├── compose.yaml               # Docker Compose (PostgreSQL)
+├── nx.json                    # Nx configuration
+├── tsconfig.base.json         # Base TypeScript config
+├── bunfig.toml               # Bun configuration
+├── mise.toml                 # Mise tool versions
+├── go.mod                     # Go module definition
+└── bun.lock                   # Lockfile (auto-generated)
 ```
 
-## Common Patterns
+## Tooling
 
-### Astro Props Pattern
-
-```astro
----
-interface Props {
-  title: string;
-  items?: string[];
-}
-
-const { title, items = [] } = Astro.props;
----
-
-<ul>
-  {items.map(item => <li>{item}</li>)}
-</ul>
-```
-
-### Using Asset Paths
-
-```astro
----
-import image from '../assets/photo.jpg';
----
-<img src={image.src} alt="Description" />
-```
-
-## VSCode Configuration
-
-Recommended extensions (auto-suggested via `.vscode/extensions.json`):
-
-- Astro
+- **Linting**: ESLint with recommended JS config + Prettier integration
+- **Formatting**: Prettier with tabs, no semicolons, single quotes
+- **Type Checking**: TypeScript strict mode + SvelteKit sync
+- **Testing**: Vitest (unit) + Playwright (e2e for web)
+- **Migration**: golang-migrate for PostgreSQL schema migrations
 
 ## Notes for Agents
 
-1. **No linting/formatting configured**: This project doesn't currently have ESLint, Prettier, or other linters set up. Code style is determined by Astro conventions and TypeScript strict mode.
+1. **Mise for tool versioning**: Both Bun and Go versions are managed via `mise.toml`. Ensure correct versions are active.
 
-2. **Cloudflare Pages deployment**: The project uses `wrangler.toml` suggesting Cloudflare Pages deployment.
+2. **Strict TypeScript**: The tsconfig extends strict settings. All strict checks are enabled.
 
-3. **Strict TypeScript**: The tsconfig extends `astro/tsconfigs/strict` which enables strict null checks and other strict options.
+3. **Monorepo structure**: Workspace packages are in `apps/*`. Bun workspaces are configured in root `package.json`.
 
-4. **Monorepo structure**: When adding new apps/libs, update `pnpm-workspace.yaml` if they're not in `apps/*` or `packages/*`.
+4. **Empty backend services**: The Go services in `apps/*-service` are currently scaffolded but empty. When implementing, follow the DDD patterns established in `libs/`.
 
-5. **Before committing**: Verify builds pass with `pnpm build` and check TypeScript compiles without errors.
+5. **Database**: PostgreSQL runs via Docker Compose. Each domain library manages its own migrations with a separate schema migrations table.
 
+6. **Before committing**: Verify builds pass with `bun run build` and check TypeScript compiles without errors.
 
 <!-- nx configuration start-->
 <!-- Leave the start & end comments to automatically receive updates. -->
@@ -260,7 +329,7 @@ Recommended extensions (auto-suggested via `.vscode/extensions.json`):
 
 - For navigating/exploring the workspace, invoke the `nx-workspace` skill first - it has patterns for querying projects, targets, and dependencies
 - When running tasks (for example build, lint, test, e2e, etc.), always prefer running the task through `nx` (i.e. `nx run`, `nx run-many`, `nx affected`) instead of using the underlying tooling directly
-- Prefix nx commands with the workspace's package manager (e.g., `pnpm nx build`, `npm exec nx test`) - avoids using globally installed CLI
+- Prefix nx commands with the workspace's package manager (e.g., `bunx nx build`, `npm exec nx test`) - avoids using globally installed CLI
 - You have access to the Nx MCP server and its tools, use them to help the user
 - For Nx plugin best practices, check `node_modules/@nx/<plugin>/PLUGIN.md`. Not all plugins have this file - proceed without it if unavailable.
 - NEVER guess CLI flags - always check nx_docs or `--help` first when unsure
@@ -274,6 +343,5 @@ Recommended extensions (auto-suggested via `.vscode/extensions.json`):
 - USE for: advanced config options, unfamiliar flags, migration guides, plugin configuration, edge cases
 - DON'T USE for: basic generator syntax (`nx g @nx/react:app`), standard commands, things you already know
 - The `nx-generate` skill handles generator discovery internally - don't call nx_docs just to look up generator syntax
-
 
 <!-- nx configuration end-->
