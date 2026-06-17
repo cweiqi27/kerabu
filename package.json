@@ -33,9 +33,9 @@
 	],
 	"devDependencies": {
 		"@nx/vite": "22.7.1",
-		"eslint": "^10.2.0",
-		"eslint-config-prettier": "^10.1.8",
-		"nx": "^22.7.1",
-		"prettier": "^3.8.1"
+		"eslint": "10.5.0",
+		"eslint-config-prettier": "10.1.8",
+		"nx": "22.7.5",
+		"prettier": "3.8.4"
 	}
 }
