@@ -1,3 +1,5 @@
+BEGIN;
+
 CREATE EXTENSION IF NOT EXISTS pg_trgm;
 
 CREATE SCHEMA IF NOT EXISTS catalog_read;
@@ -14,14 +16,11 @@ CREATE TABLE catalog_read.view_products (
   quantity_display TEXT NOT NULL,
   net_value NUMERIC(10, 3) NOT NULL,
   net_unit TEXT NOT NULL,
-  unit_family TEXT NOT NULL,
   image_url TEXT,
   nutriscore TEXT,
   nova_group INTEGER,
   created_at TIMESTAMP WITH TIME ZONE NOT NULL,
-  created_by TEXT NOT NULL,
-  updated_at TIMESTAMP WITH TIME ZONE,
-  updated_by TEXT
+  updated_at TIMESTAMP WITH TIME ZONE
 );
 
 CREATE TABLE catalog_read.view_brands (
@@ -35,9 +34,7 @@ CREATE TABLE catalog_read.view_brands (
   tag_count INTEGER NOT NULL,
   logo_url TEXT,
   created_at TIMESTAMP WITH TIME ZONE NOT NULL,
-  created_by TEXT NOT NULL,
-  updated_at TIMESTAMP WITH TIME ZONE,
-  updated_by TEXT
+  updated_at TIMESTAMP WITH TIME ZONE
 );
 
 
@@ -47,9 +44,7 @@ CREATE TABLE catalog_read.view_categories (
   status TEXT NOT NULL,
   parent JSONB,
   created_at TIMESTAMP WITH TIME ZONE NOT NULL,
-  created_by TEXT NOT NULL,
-  updated_at TIMESTAMP WITH TIME ZONE,
-  updated_by TEXT
+  updated_at TIMESTAMP WITH TIME ZONE
 );
 
 CREATE INDEX idx_view_products_barcode ON catalog_read.view_products(barcode);
@@ -75,4 +70,5 @@ CREATE INDEX idx_view_brands_private_owner
   ON catalog_read.view_brands (owner_id, LOWER(brand_name))
   WHERE visibility IN ('private');
 
-CREATE INDEX idx_view_categories_status ON catalog_read.view_categories(status);
+COMMIT;
+

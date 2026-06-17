@@ -1,0 +1,28 @@
+{
+	"name": "inventory",
+	"sourceRoot": "libs/inventory",
+	"projectType": "library",
+	"targets": {
+		"migrate-create": {
+			"executor": "nx:run-commands",
+			"options": {
+				"cwd": "libs/inventory",
+				"command": "migrate create -seq -ext sql -dir infrastructure/db/migrations {args.name}"
+			}
+		},
+		"migrate-up": {
+			"executor": "nx:run-commands",
+			"options": {
+				"cwd": "libs/inventory",
+				"command": "migrate -database 'postgres://postgres:postgres@localhost:5432/kerabu?sslmode=disable&x-migrations-table=inventory_schema_migrations' -path infrastructure/db/migrations up"
+			}
+		},
+		"migrate-down": {
+			"executor": "nx:run-commands",
+			"options": {
+				"cwd": "libs/inventory",
+				"command": "migrate -database 'postgres://postgres:postgres@localhost:5432/kerabu?sslmode=disable&x-migrations-table=inventory_schema_migrations' -path infrastructure/db/migrations down"
+			}
+		}
+	}
+}

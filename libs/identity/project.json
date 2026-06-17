@@ -1,0 +1,28 @@
+{
+	"name": "identity",
+	"sourceRoot": "libs/identity",
+	"projectType": "library",
+	"targets": {
+		"migrate-create": {
+			"executor": "nx:run-commands",
+			"options": {
+				"cwd": "libs/identity",
+				"command": "migrate create -seq -ext sql -dir infrastructure/db/migrations {args.name}"
+			}
+		},
+		"migrate-up": {
+			"executor": "nx:run-commands",
+			"options": {
+				"cwd": "libs/identity",
+				"command": "migrate -database 'postgres://postgres:postgres@localhost:5432/kerabu?sslmode=disable&x-migrations-table=identity_schema_migrations' -path infrastructure/db/migrations up"
+			}
+		},
+		"migrate-down": {
+			"executor": "nx:run-commands",
+			"options": {
+				"cwd": "libs/identity",
+				"command": "migrate -database 'postgres://postgres:postgres@localhost:5432/kerabu?sslmode=disable&x-migrations-table=identity_schema_migrations' -path infrastructure/db/migrations down"
+			}
+		}
+	}
+}
