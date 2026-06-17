@@ -23,6 +23,13 @@
 				"cwd": "libs/inventory",
 				"command": "migrate -database 'postgres://postgres:postgres@localhost:5432/kerabu?sslmode=disable&x-migrations-table=inventory_schema_migrations' -path infrastructure/db/migrations down"
 			}
+		},
+		"sqlc-generate": {
+			"executor": "nx:run-commands",
+			"options": {
+				"cwd": "libs/inventory",
+				"command": "sqlc generate"
+			}
 		}
 	}
 }

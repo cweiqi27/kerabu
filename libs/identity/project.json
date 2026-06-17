@@ -23,6 +23,13 @@
 				"cwd": "libs/identity",
 				"command": "migrate -database 'postgres://postgres:postgres@localhost:5432/kerabu?sslmode=disable&x-migrations-table=identity_schema_migrations' -path infrastructure/db/migrations down"
 			}
+		},
+		"sqlc-generate": {
+			"executor": "nx:run-commands",
+			"options": {
+				"cwd": "libs/identity",
+				"command": "sqlc generate"
+			}
 		}
 	}
 }

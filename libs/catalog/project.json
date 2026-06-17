@@ -23,6 +23,13 @@
 				"cwd": "libs/catalog",
 				"command": "migrate -database 'postgres://postgres:postgres@localhost:5432/kerabu?sslmode=disable&x-migrations-table=catalog_schema_migrations' -path infrastructure/db/migrations down"
 			}
+		},
+		"sqlc-generate": {
+			"executor": "nx:run-commands",
+			"options": {
+				"cwd": "libs/catalog",
+				"command": "sqlc generate"
+			}
 		}
 	}
 }
