@@ -17,32 +17,18 @@
 				"command": "migrate create -seq -ext sql -dir infrastructure/db_read/migrations {args.name}"
 			}
 		},
-		"migrate-read-up": {
+		"migrate-up": {
 			"executor": "nx:run-commands",
 			"options": {
 				"cwd": "libs/notification",
-				"command": "migrate -database \"$NOTIFICATION_READ_POSTGRES_STR?sslmode=disable&x-migrations-table=notification_read_schema_migrations\" -path infrastructure/db_read/migrations up"
+				"command": "migrate -database \"$NOTIFICATION_READ_POSTGRES_STR\" -path infrastructure/db_read/migrations up && migrate -database \"$NOTIFICATION_WRITE_POSTGRES_STR\" -path infrastructure/db_write/migrations up"
 			}
 		},
-		"migrate-read-down": {
+		"migrate-down": {
 			"executor": "nx:run-commands",
 			"options": {
 				"cwd": "libs/notification",
-				"command": "migrate -database \"$NOTIFICATION_READ_POSTGRES_STR?sslmode=disable&x-migrations-table=notification_read_schema_migrations\" -path infrastructure/db_read/migrations down"
-			}
-		},
-		"migrate-write-up": {
-			"executor": "nx:run-commands",
-			"options": {
-				"cwd": "libs/notification",
-				"command": "migrate -database \"$NOTIFICATION_WRITE_POSTGRES_STR?sslmode=disable&x-migrations-table=notification_write_schema_migrations\" -path infrastructure/db_write/migrations up"
-			}
-		},
-		"migrate-write-down": {
-			"executor": "nx:run-commands",
-			"options": {
-				"cwd": "libs/notification",
-				"command": "migrate -database \"$NOTIFICATION_WRITE_POSTGRES_STR?sslmode=disable&x-migrations-table=notification_write_schema_migrations\" -path infrastructure/db_write/migrations down"
+				"command": "migrate -database \"$NOTIFICATION_READ_POSTGRES_STR\" -path infrastructure/db_read/migrations down && migrate -database \"$NOTIFICATION_WRITE_POSTGRES_STR\" -path infrastructure/db_write/migrations down"
 			}
 		},
 		"sqlc-generate": {

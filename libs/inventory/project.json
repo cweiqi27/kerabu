@@ -17,32 +17,18 @@
 				"command": "migrate create -seq -ext sql -dir infrastructure/db_read/migrations {args.name}"
 			}
 		},
-		"migrate-read-up": {
+		"migrate-up": {
 			"executor": "nx:run-commands",
 			"options": {
 				"cwd": "libs/inventory",
-				"command": "migrate -database \"$INVENTORY_READ_POSTGRES_STR?sslmode=disable&x-migrations-table=inventory_read_schema_migrations\" -path infrastructure/db_read/migrations up"
+				"command": "migrate -database \"$INVENTORY_READ_POSTGRES_STR\" -path infrastructure/db_read/migrations up && migrate -database \"$INVENTORY_WRITE_POSTGRES_STR\" -path infrastructure/db_write/migrations up"
 			}
 		},
-		"migrate-read-down": {
+		"migrate-down": {
 			"executor": "nx:run-commands",
 			"options": {
 				"cwd": "libs/inventory",
-				"command": "migrate -database \"$INVENTORY_READ_POSTGRES_STR?sslmode=disable&x-migrations-table=inventory_read_schema_migrations\" -path infrastructure/db_read/migrations down"
-			}
-		},
-		"migrate-write-up": {
-			"executor": "nx:run-commands",
-			"options": {
-				"cwd": "libs/inventory",
-				"command": "migrate -database \"$INVENTORY_WRITE_POSTGRES_STR?sslmode=disable&x-migrations-table=inventory_write_schema_migrations\" -path infrastructure/db_write/migrations up"
-			}
-		},
-		"migrate-write-down": {
-			"executor": "nx:run-commands",
-			"options": {
-				"cwd": "libs/inventory",
-				"command": "migrate -database \"$INVENTORY_WRITE_POSTGRES_STR?sslmode=disable&x-migrations-table=inventory_write_schema_migrations\" -path infrastructure/db_write/migrations down"
+				"command": "migrate -database \"$INVENTORY_READ_POSTGRES_STR\" -path infrastructure/db_read/migrations down && migrate -database \"$INVENTORY_WRITE_POSTGRES_STR\" -path infrastructure/db_write/migrations down"
 			}
 		},
 		"sqlc-generate": {

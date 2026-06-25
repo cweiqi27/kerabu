@@ -19,4 +19,6 @@ DROP TYPE IF EXISTS users_status;
 DROP TYPE IF EXISTS outbox_event_status;
 DROP TYPE IF EXISTS outbox_archive_status;
 
+DROP EXTENSION IF EXISTS citext;
+
 COMMIT;
