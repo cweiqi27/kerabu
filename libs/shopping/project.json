@@ -14,14 +14,14 @@
 			"executor": "nx:run-commands",
 			"options": {
 				"cwd": "libs/shopping",
-				"command": "migrate -database 'postgres://postgres:postgres@localhost:5432/kerabu?sslmode=disable&x-migrations-table=shopping_schema_migrations' -path infrastructure/db/migrations up"
+				"command": "migrate -database \"$KERABU_POSTGRES_STR?sslmode=disable&x-migrations-table=shopping_schema_migrations\" -path infrastructure/db/migrations up"
 			}
 		},
 		"migrate-down": {
 			"executor": "nx:run-commands",
 			"options": {
 				"cwd": "libs/shopping",
-				"command": "migrate -database 'postgres://postgres:postgres@localhost:5432/kerabu?sslmode=disable&x-migrations-table=shopping_schema_migrations' -path infrastructure/db/migrations down"
+				"command": "migrate -database \"$KERABU_POSTGRES_STR?sslmode=disable&x-migrations-table=shopping_schema_migrations\" -path infrastructure/db/migrations down"
 			}
 		},
 		"sqlc-generate": {

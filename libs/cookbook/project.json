@@ -14,14 +14,14 @@
 			"executor": "nx:run-commands",
 			"options": {
 				"cwd": "libs/cookbook",
-				"command": "migrate -database 'postgres://postgres:postgres@localhost:5432/kerabu?sslmode=disable&x-migrations-table=cookbook_schema_migrations' -path infrastructure/db/migrations up"
+				"command": "migrate -database \"$KERABU_POSTGRES_STR?sslmode=disable&x-migrations-table=cookbook_schema_migrations\" -path infrastructure/db/migrations up"
 			}
 		},
 		"migrate-down": {
 			"executor": "nx:run-commands",
 			"options": {
 				"cwd": "libs/cookbook",
-				"command": "migrate -database 'postgres://postgres:postgres@localhost:5432/kerabu?sslmode=disable&x-migrations-table=cookbook_schema_migrations' -path infrastructure/db/migrations down"
+				"command": "migrate -database \"$KERABU_POSTGRES_STR?sslmode=disable&x-migrations-table=cookbook_schema_migrations\" -path infrastructure/db/migrations down"
 			}
 		},
 		"sqlc-generate": {
@@ -29,6 +29,13 @@
 			"options": {
 				"cwd": "libs/cookbook",
 				"command": "sqlc generate"
+			}
+		},
+		"echo-test": {
+			"executor": "nx:run-commands",
+			"options": {
+				"cwd": "libs/cookbook",
+				"command": "echo $KERABU_POSTGRES_STR"
 			}
 		}
 	}

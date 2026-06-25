@@ -1,0 +1,35 @@
+{
+	"name": "notification",
+	"sourceRoot": "libs/notification",
+	"projectType": "library",
+	"targets": {
+		"migrate-create": {
+			"executor": "nx:run-commands",
+			"options": {
+				"cwd": "libs/notification",
+				"command": "migrate create -seq -ext sql -dir infrastructure/db/migrations {args.name}"
+			}
+		},
+		"migrate-up": {
+			"executor": "nx:run-commands",
+			"options": {
+				"cwd": "libs/notification",
+				"command": "migrate -database \"$KERABU_POSTGRES_STR?sslmode=disable&x-migrations-table=notification_schema_migrations\" -path infrastructure/db/migrations up"
+			}
+		},
+		"migrate-down": {
+			"executor": "nx:run-commands",
+			"options": {
+				"cwd": "libs/notification",
+				"command": "migrate -database \"$KERABU_POSTGRES_STR?sslmode=disable&x-migrations-table=notification_schema_migrations\" -path infrastructure/db/migrations down"
+			}
+		},
+		"sqlc-generate": {
+			"executor": "nx:run-commands",
+			"options": {
+				"cwd": "libs/notification",
+				"command": "sqlc generate"
+			}
+		}
+	}
+}
