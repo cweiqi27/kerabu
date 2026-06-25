@@ -3,7 +3,7 @@
 //   sqlc v1.31.1
 // source: brand_tags.sql
 
-package db
+package dbwrite
 
 import (
 	"context"
@@ -12,7 +12,7 @@ import (
 )
 
 const createBrandTag = `-- name: CreateBrandTag :one
-INSERT INTO catalog_write.brand_tags (brand_id, tag_id, created_at, created_by)
+INSERT INTO brand_tags (brand_id, tag_id, created_at, created_by)
 VALUES ($1, $2, $3, $4)
 RETURNING brand_id, tag_id, created_at, created_by
 `
@@ -24,14 +24,14 @@ type CreateBrandTagParams struct {
 	CreatedBy string             `db:"created_by" json:"created_by"`
 }
 
-func (q *Queries) CreateBrandTag(ctx context.Context, arg CreateBrandTagParams) (CatalogWriteBrandTag, error) {
+func (q *Queries) CreateBrandTag(ctx context.Context, arg CreateBrandTagParams) (BrandTag, error) {
 	row := q.db.QueryRow(ctx, createBrandTag,
 		arg.BrandID,
 		arg.TagID,
 		arg.CreatedAt,
 		arg.CreatedBy,
 	)
-	var i CatalogWriteBrandTag
+	var i BrandTag
 	err := row.Scan(
 		&i.BrandID,
 		&i.TagID,
@@ -42,7 +42,7 @@ func (q *Queries) CreateBrandTag(ctx context.Context, arg CreateBrandTagParams) 
 }
 
 const removeBrandTag = `-- name: RemoveBrandTag :exec
-DELETE FROM catalog_write.brand_tags
+DELETE FROM brand_tags
 WHERE brand_id = $1 AND tag_id = $2
 `
 

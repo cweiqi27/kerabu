@@ -3,7 +3,7 @@
 //   sqlc v1.31.1
 // source: provider_raw_data.sql
 
-package db
+package dbwrite
 
 import (
 	"context"
@@ -12,23 +12,23 @@ import (
 )
 
 const createProviderRawData = `-- name: CreateProviderRawData :one
-INSERT INTO catalog_write.provider_raw_data (
+INSERT INTO provider_raw_data (
   id, barcode, status, provider_id, raw_data, fetched_at, processed_at
 ) VALUES ($1, $2, $3, $4, $5, $6, $7)
 RETURNING id, barcode, status, provider_id, raw_data, fetched_at, processed_at
 `
 
 type CreateProviderRawDataParams struct {
-	ID          pgtype.UUID                       `db:"id" json:"id"`
-	Barcode     pgtype.Text                       `db:"barcode" json:"barcode"`
-	Status      CatalogWriteProviderRawDataStatus `db:"status" json:"status"`
-	ProviderID  pgtype.UUID                       `db:"provider_id" json:"provider_id"`
-	RawData     []byte                            `db:"raw_data" json:"raw_data"`
-	FetchedAt   pgtype.Timestamptz                `db:"fetched_at" json:"fetched_at"`
-	ProcessedAt pgtype.Timestamptz                `db:"processed_at" json:"processed_at"`
+	ID          pgtype.UUID           `db:"id" json:"id"`
+	Barcode     pgtype.Text           `db:"barcode" json:"barcode"`
+	Status      ProviderRawDataStatus `db:"status" json:"status"`
+	ProviderID  pgtype.UUID           `db:"provider_id" json:"provider_id"`
+	RawData     []byte                `db:"raw_data" json:"raw_data"`
+	FetchedAt   pgtype.Timestamptz    `db:"fetched_at" json:"fetched_at"`
+	ProcessedAt pgtype.Timestamptz    `db:"processed_at" json:"processed_at"`
 }
 
-func (q *Queries) CreateProviderRawData(ctx context.Context, arg CreateProviderRawDataParams) (CatalogWriteProviderRawDatum, error) {
+func (q *Queries) CreateProviderRawData(ctx context.Context, arg CreateProviderRawDataParams) (ProviderRawDatum, error) {
 	row := q.db.QueryRow(ctx, createProviderRawData,
 		arg.ID,
 		arg.Barcode,
@@ -38,7 +38,7 @@ func (q *Queries) CreateProviderRawData(ctx context.Context, arg CreateProviderR
 		arg.FetchedAt,
 		arg.ProcessedAt,
 	)
-	var i CatalogWriteProviderRawDatum
+	var i ProviderRawDatum
 	err := row.Scan(
 		&i.ID,
 		&i.Barcode,
@@ -52,13 +52,13 @@ func (q *Queries) CreateProviderRawData(ctx context.Context, arg CreateProviderR
 }
 
 const getProviderRawDataByID = `-- name: GetProviderRawDataByID :one
-SELECT id, barcode, status, provider_id, raw_data, fetched_at, processed_at FROM catalog_write.provider_raw_data
+SELECT id, barcode, status, provider_id, raw_data, fetched_at, processed_at FROM provider_raw_data
 WHERE id = $1
 `
 
-func (q *Queries) GetProviderRawDataByID(ctx context.Context, id pgtype.UUID) (CatalogWriteProviderRawDatum, error) {
+func (q *Queries) GetProviderRawDataByID(ctx context.Context, id pgtype.UUID) (ProviderRawDatum, error) {
 	row := q.db.QueryRow(ctx, getProviderRawDataByID, id)
-	var i CatalogWriteProviderRawDatum
+	var i ProviderRawDatum
 	err := row.Scan(
 		&i.ID,
 		&i.Barcode,
@@ -72,7 +72,7 @@ func (q *Queries) GetProviderRawDataByID(ctx context.Context, id pgtype.UUID) (C
 }
 
 const updateProviderRawDataStatus = `-- name: UpdateProviderRawDataStatus :one
-UPDATE catalog_write.provider_raw_data SET
+UPDATE provider_raw_data SET
   status = $2,
   processed_at = $3
 WHERE id = $1
@@ -80,14 +80,14 @@ RETURNING id, barcode, status, provider_id, raw_data, fetched_at, processed_at
 `
 
 type UpdateProviderRawDataStatusParams struct {
-	ID          pgtype.UUID                       `db:"id" json:"id"`
-	Status      CatalogWriteProviderRawDataStatus `db:"status" json:"status"`
-	ProcessedAt pgtype.Timestamptz                `db:"processed_at" json:"processed_at"`
+	ID          pgtype.UUID           `db:"id" json:"id"`
+	Status      ProviderRawDataStatus `db:"status" json:"status"`
+	ProcessedAt pgtype.Timestamptz    `db:"processed_at" json:"processed_at"`
 }
 
-func (q *Queries) UpdateProviderRawDataStatus(ctx context.Context, arg UpdateProviderRawDataStatusParams) (CatalogWriteProviderRawDatum, error) {
+func (q *Queries) UpdateProviderRawDataStatus(ctx context.Context, arg UpdateProviderRawDataStatusParams) (ProviderRawDatum, error) {
 	row := q.db.QueryRow(ctx, updateProviderRawDataStatus, arg.ID, arg.Status, arg.ProcessedAt)
-	var i CatalogWriteProviderRawDatum
+	var i ProviderRawDatum
 	err := row.Scan(
 		&i.ID,
 		&i.Barcode,

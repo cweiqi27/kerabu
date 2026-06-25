@@ -3,7 +3,7 @@
 //   sqlc v1.31.1
 // source: products.sql
 
-package db
+package dbwrite
 
 import (
 	"context"
@@ -12,33 +12,33 @@ import (
 )
 
 const createProduct = `-- name: CreateProduct :one
-INSERT INTO catalog_write.products (
+INSERT INTO products (
   id, status, name, barcode, net_value, net_unit, image_url, nutriscore, nova_group, owner_id, visibility, created_at, created_by, updated_at, updated_by, deleted_at, deleted_by
 ) VALUES ($1, $2, $3, $4, $5, $6, $7, $8, $9, $10, $11, $12, $13, $14, $15, $16, $17)
 RETURNING id, status, name, barcode, net_value, net_unit, image_url, nutriscore, nova_group, owner_id, visibility, created_at, created_by, updated_at, updated_by, deleted_at, deleted_by
 `
 
 type CreateProductParams struct {
-	ID         pgtype.UUID                   `db:"id" json:"id"`
-	Status     CatalogWriteProductStatus     `db:"status" json:"status"`
-	Name       string                        `db:"name" json:"name"`
-	Barcode    pgtype.Text                   `db:"barcode" json:"barcode"`
-	NetValue   pgtype.Numeric                `db:"net_value" json:"net_value"`
-	NetUnit    CatalogWriteProductNetUnit    `db:"net_unit" json:"net_unit"`
-	ImageUrl   pgtype.Text                   `db:"image_url" json:"image_url"`
-	Nutriscore pgtype.Text                   `db:"nutriscore" json:"nutriscore"`
-	NovaGroup  pgtype.Int4                   `db:"nova_group" json:"nova_group"`
-	OwnerID    pgtype.UUID                   `db:"owner_id" json:"owner_id"`
-	Visibility CatalogWriteProductVisibility `db:"visibility" json:"visibility"`
-	CreatedAt  pgtype.Timestamptz            `db:"created_at" json:"created_at"`
-	CreatedBy  string                        `db:"created_by" json:"created_by"`
-	UpdatedAt  pgtype.Timestamptz            `db:"updated_at" json:"updated_at"`
-	UpdatedBy  pgtype.Text                   `db:"updated_by" json:"updated_by"`
-	DeletedAt  pgtype.Timestamptz            `db:"deleted_at" json:"deleted_at"`
-	DeletedBy  pgtype.Text                   `db:"deleted_by" json:"deleted_by"`
+	ID         pgtype.UUID        `db:"id" json:"id"`
+	Status     ProductStatus      `db:"status" json:"status"`
+	Name       string             `db:"name" json:"name"`
+	Barcode    pgtype.Text        `db:"barcode" json:"barcode"`
+	NetValue   pgtype.Numeric     `db:"net_value" json:"net_value"`
+	NetUnit    ProductNetUnit     `db:"net_unit" json:"net_unit"`
+	ImageUrl   pgtype.Text        `db:"image_url" json:"image_url"`
+	Nutriscore pgtype.Text        `db:"nutriscore" json:"nutriscore"`
+	NovaGroup  pgtype.Int4        `db:"nova_group" json:"nova_group"`
+	OwnerID    pgtype.UUID        `db:"owner_id" json:"owner_id"`
+	Visibility ProductVisibility  `db:"visibility" json:"visibility"`
+	CreatedAt  pgtype.Timestamptz `db:"created_at" json:"created_at"`
+	CreatedBy  string             `db:"created_by" json:"created_by"`
+	UpdatedAt  pgtype.Timestamptz `db:"updated_at" json:"updated_at"`
+	UpdatedBy  pgtype.Text        `db:"updated_by" json:"updated_by"`
+	DeletedAt  pgtype.Timestamptz `db:"deleted_at" json:"deleted_at"`
+	DeletedBy  pgtype.Text        `db:"deleted_by" json:"deleted_by"`
 }
 
-func (q *Queries) CreateProduct(ctx context.Context, arg CreateProductParams) (CatalogWriteProduct, error) {
+func (q *Queries) CreateProduct(ctx context.Context, arg CreateProductParams) (Product, error) {
 	row := q.db.QueryRow(ctx, createProduct,
 		arg.ID,
 		arg.Status,
@@ -58,7 +58,7 @@ func (q *Queries) CreateProduct(ctx context.Context, arg CreateProductParams) (C
 		arg.DeletedAt,
 		arg.DeletedBy,
 	)
-	var i CatalogWriteProduct
+	var i Product
 	err := row.Scan(
 		&i.ID,
 		&i.Status,
@@ -82,13 +82,13 @@ func (q *Queries) CreateProduct(ctx context.Context, arg CreateProductParams) (C
 }
 
 const getProductByBarcode = `-- name: GetProductByBarcode :one
-SELECT id, status, name, barcode, net_value, net_unit, image_url, nutriscore, nova_group, owner_id, visibility, created_at, created_by, updated_at, updated_by, deleted_at, deleted_by FROM catalog_write.products
+SELECT id, status, name, barcode, net_value, net_unit, image_url, nutriscore, nova_group, owner_id, visibility, created_at, created_by, updated_at, updated_by, deleted_at, deleted_by FROM products
 WHERE barcode = $1 AND deleted_at IS NULL
 `
 
-func (q *Queries) GetProductByBarcode(ctx context.Context, barcode pgtype.Text) (CatalogWriteProduct, error) {
+func (q *Queries) GetProductByBarcode(ctx context.Context, barcode pgtype.Text) (Product, error) {
 	row := q.db.QueryRow(ctx, getProductByBarcode, barcode)
-	var i CatalogWriteProduct
+	var i Product
 	err := row.Scan(
 		&i.ID,
 		&i.Status,
@@ -112,13 +112,13 @@ func (q *Queries) GetProductByBarcode(ctx context.Context, barcode pgtype.Text) 
 }
 
 const getProductByID = `-- name: GetProductByID :one
-SELECT id, status, name, barcode, net_value, net_unit, image_url, nutriscore, nova_group, owner_id, visibility, created_at, created_by, updated_at, updated_by, deleted_at, deleted_by FROM catalog_write.products
+SELECT id, status, name, barcode, net_value, net_unit, image_url, nutriscore, nova_group, owner_id, visibility, created_at, created_by, updated_at, updated_by, deleted_at, deleted_by FROM products
 WHERE id = $1 AND deleted_at IS NULL
 `
 
-func (q *Queries) GetProductByID(ctx context.Context, id pgtype.UUID) (CatalogWriteProduct, error) {
+func (q *Queries) GetProductByID(ctx context.Context, id pgtype.UUID) (Product, error) {
 	row := q.db.QueryRow(ctx, getProductByID, id)
-	var i CatalogWriteProduct
+	var i Product
 	err := row.Scan(
 		&i.ID,
 		&i.Status,
@@ -142,7 +142,7 @@ func (q *Queries) GetProductByID(ctx context.Context, id pgtype.UUID) (CatalogWr
 }
 
 const listProducts = `-- name: ListProducts :many
-SELECT id, status, name, barcode, net_value, net_unit, image_url, nutriscore, nova_group, owner_id, visibility, created_at, created_by, updated_at, updated_by, deleted_at, deleted_by FROM catalog_write.products
+SELECT id, status, name, barcode, net_value, net_unit, image_url, nutriscore, nova_group, owner_id, visibility, created_at, created_by, updated_at, updated_by, deleted_at, deleted_by FROM products
 WHERE deleted_at IS NULL
   AND ($1::timestamptz IS NULL OR (created_at, id) < ($1::timestamptz, $2::uuid))
 ORDER BY created_at DESC, id DESC
@@ -155,15 +155,15 @@ type ListProductsParams struct {
 	PageSize        int32              `db:"page_size" json:"page_size"`
 }
 
-func (q *Queries) ListProducts(ctx context.Context, arg ListProductsParams) ([]CatalogWriteProduct, error) {
+func (q *Queries) ListProducts(ctx context.Context, arg ListProductsParams) ([]Product, error) {
 	rows, err := q.db.Query(ctx, listProducts, arg.CursorCreatedAt, arg.CursorID, arg.PageSize)
 	if err != nil {
 		return nil, err
 	}
 	defer rows.Close()
-	items := []CatalogWriteProduct{}
+	items := []Product{}
 	for rows.Next() {
-		var i CatalogWriteProduct
+		var i Product
 		if err := rows.Scan(
 			&i.ID,
 			&i.Status,
@@ -194,7 +194,7 @@ func (q *Queries) ListProducts(ctx context.Context, arg ListProductsParams) ([]C
 }
 
 const softDeleteProduct = `-- name: SoftDeleteProduct :exec
-UPDATE catalog_write.products SET
+UPDATE products SET
   deleted_at = $2,
   deleted_by = $3
 WHERE id = $1
@@ -212,7 +212,7 @@ func (q *Queries) SoftDeleteProduct(ctx context.Context, arg SoftDeleteProductPa
 }
 
 const updateProduct = `-- name: UpdateProduct :one
-UPDATE catalog_write.products SET
+UPDATE products SET
   status = $2,
   name = $3,
   barcode = $4,
@@ -232,24 +232,24 @@ RETURNING id, status, name, barcode, net_value, net_unit, image_url, nutriscore,
 `
 
 type UpdateProductParams struct {
-	ID         pgtype.UUID                   `db:"id" json:"id"`
-	Status     CatalogWriteProductStatus     `db:"status" json:"status"`
-	Name       string                        `db:"name" json:"name"`
-	Barcode    pgtype.Text                   `db:"barcode" json:"barcode"`
-	NetValue   pgtype.Numeric                `db:"net_value" json:"net_value"`
-	NetUnit    CatalogWriteProductNetUnit    `db:"net_unit" json:"net_unit"`
-	ImageUrl   pgtype.Text                   `db:"image_url" json:"image_url"`
-	Nutriscore pgtype.Text                   `db:"nutriscore" json:"nutriscore"`
-	NovaGroup  pgtype.Int4                   `db:"nova_group" json:"nova_group"`
-	OwnerID    pgtype.UUID                   `db:"owner_id" json:"owner_id"`
-	Visibility CatalogWriteProductVisibility `db:"visibility" json:"visibility"`
-	UpdatedAt  pgtype.Timestamptz            `db:"updated_at" json:"updated_at"`
-	UpdatedBy  pgtype.Text                   `db:"updated_by" json:"updated_by"`
-	DeletedAt  pgtype.Timestamptz            `db:"deleted_at" json:"deleted_at"`
-	DeletedBy  pgtype.Text                   `db:"deleted_by" json:"deleted_by"`
+	ID         pgtype.UUID        `db:"id" json:"id"`
+	Status     ProductStatus      `db:"status" json:"status"`
+	Name       string             `db:"name" json:"name"`
+	Barcode    pgtype.Text        `db:"barcode" json:"barcode"`
+	NetValue   pgtype.Numeric     `db:"net_value" json:"net_value"`
+	NetUnit    ProductNetUnit     `db:"net_unit" json:"net_unit"`
+	ImageUrl   pgtype.Text        `db:"image_url" json:"image_url"`
+	Nutriscore pgtype.Text        `db:"nutriscore" json:"nutriscore"`
+	NovaGroup  pgtype.Int4        `db:"nova_group" json:"nova_group"`
+	OwnerID    pgtype.UUID        `db:"owner_id" json:"owner_id"`
+	Visibility ProductVisibility  `db:"visibility" json:"visibility"`
+	UpdatedAt  pgtype.Timestamptz `db:"updated_at" json:"updated_at"`
+	UpdatedBy  pgtype.Text        `db:"updated_by" json:"updated_by"`
+	DeletedAt  pgtype.Timestamptz `db:"deleted_at" json:"deleted_at"`
+	DeletedBy  pgtype.Text        `db:"deleted_by" json:"deleted_by"`
 }
 
-func (q *Queries) UpdateProduct(ctx context.Context, arg UpdateProductParams) (CatalogWriteProduct, error) {
+func (q *Queries) UpdateProduct(ctx context.Context, arg UpdateProductParams) (Product, error) {
 	row := q.db.QueryRow(ctx, updateProduct,
 		arg.ID,
 		arg.Status,
@@ -267,7 +267,7 @@ func (q *Queries) UpdateProduct(ctx context.Context, arg UpdateProductParams) (C
 		arg.DeletedAt,
 		arg.DeletedBy,
 	)
-	var i CatalogWriteProduct
+	var i Product
 	err := row.Scan(
 		&i.ID,
 		&i.Status,

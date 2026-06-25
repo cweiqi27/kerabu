@@ -3,7 +3,7 @@
 //   sqlc v1.31.1
 // source: categories.sql
 
-package db
+package dbwrite
 
 import (
 	"context"
@@ -12,26 +12,26 @@ import (
 )
 
 const createCategory = `-- name: CreateCategory :one
-INSERT INTO catalog_write.categories (
+INSERT INTO categories (
   id, status, name, parent_id, created_at, created_by, updated_at, updated_by, deleted_at, deleted_by
 ) VALUES ($1, $2, $3, $4, $5, $6, $7, $8, $9, $10)
 RETURNING id, status, name, parent_id, created_at, created_by, updated_at, updated_by, deleted_at, deleted_by
 `
 
 type CreateCategoryParams struct {
-	ID        pgtype.UUID                `db:"id" json:"id"`
-	Status    CatalogWriteCategoryStatus `db:"status" json:"status"`
-	Name      string                     `db:"name" json:"name"`
-	ParentID  pgtype.UUID                `db:"parent_id" json:"parent_id"`
-	CreatedAt pgtype.Timestamptz         `db:"created_at" json:"created_at"`
-	CreatedBy string                     `db:"created_by" json:"created_by"`
-	UpdatedAt pgtype.Timestamptz         `db:"updated_at" json:"updated_at"`
-	UpdatedBy pgtype.Text                `db:"updated_by" json:"updated_by"`
-	DeletedAt pgtype.Timestamptz         `db:"deleted_at" json:"deleted_at"`
-	DeletedBy pgtype.Text                `db:"deleted_by" json:"deleted_by"`
+	ID        pgtype.UUID        `db:"id" json:"id"`
+	Status    CategoryStatus     `db:"status" json:"status"`
+	Name      string             `db:"name" json:"name"`
+	ParentID  pgtype.UUID        `db:"parent_id" json:"parent_id"`
+	CreatedAt pgtype.Timestamptz `db:"created_at" json:"created_at"`
+	CreatedBy string             `db:"created_by" json:"created_by"`
+	UpdatedAt pgtype.Timestamptz `db:"updated_at" json:"updated_at"`
+	UpdatedBy pgtype.Text        `db:"updated_by" json:"updated_by"`
+	DeletedAt pgtype.Timestamptz `db:"deleted_at" json:"deleted_at"`
+	DeletedBy pgtype.Text        `db:"deleted_by" json:"deleted_by"`
 }
 
-func (q *Queries) CreateCategory(ctx context.Context, arg CreateCategoryParams) (CatalogWriteCategory, error) {
+func (q *Queries) CreateCategory(ctx context.Context, arg CreateCategoryParams) (Category, error) {
 	row := q.db.QueryRow(ctx, createCategory,
 		arg.ID,
 		arg.Status,
@@ -44,7 +44,7 @@ func (q *Queries) CreateCategory(ctx context.Context, arg CreateCategoryParams) 
 		arg.DeletedAt,
 		arg.DeletedBy,
 	)
-	var i CatalogWriteCategory
+	var i Category
 	err := row.Scan(
 		&i.ID,
 		&i.Status,
@@ -61,13 +61,13 @@ func (q *Queries) CreateCategory(ctx context.Context, arg CreateCategoryParams) 
 }
 
 const getCategoryByID = `-- name: GetCategoryByID :one
-SELECT id, status, name, parent_id, created_at, created_by, updated_at, updated_by, deleted_at, deleted_by FROM catalog_write.categories
+SELECT id, status, name, parent_id, created_at, created_by, updated_at, updated_by, deleted_at, deleted_by FROM categories
 WHERE id = $1 AND deleted_at IS NULL
 `
 
-func (q *Queries) GetCategoryByID(ctx context.Context, id pgtype.UUID) (CatalogWriteCategory, error) {
+func (q *Queries) GetCategoryByID(ctx context.Context, id pgtype.UUID) (Category, error) {
 	row := q.db.QueryRow(ctx, getCategoryByID, id)
-	var i CatalogWriteCategory
+	var i Category
 	err := row.Scan(
 		&i.ID,
 		&i.Status,
@@ -84,7 +84,7 @@ func (q *Queries) GetCategoryByID(ctx context.Context, id pgtype.UUID) (CatalogW
 }
 
 const listCategories = `-- name: ListCategories :many
-SELECT id, status, name, parent_id, created_at, created_by, updated_at, updated_by, deleted_at, deleted_by FROM catalog_write.categories
+SELECT id, status, name, parent_id, created_at, created_by, updated_at, updated_by, deleted_at, deleted_by FROM categories
 WHERE deleted_at IS NULL
   AND ($1::timestamptz IS NULL OR (created_at, id) < ($1::timestamptz, $2::uuid))
 ORDER BY created_at DESC, id DESC
@@ -97,15 +97,15 @@ type ListCategoriesParams struct {
 	PageSize        int32              `db:"page_size" json:"page_size"`
 }
 
-func (q *Queries) ListCategories(ctx context.Context, arg ListCategoriesParams) ([]CatalogWriteCategory, error) {
+func (q *Queries) ListCategories(ctx context.Context, arg ListCategoriesParams) ([]Category, error) {
 	rows, err := q.db.Query(ctx, listCategories, arg.CursorCreatedAt, arg.CursorID, arg.PageSize)
 	if err != nil {
 		return nil, err
 	}
 	defer rows.Close()
-	items := []CatalogWriteCategory{}
+	items := []Category{}
 	for rows.Next() {
-		var i CatalogWriteCategory
+		var i Category
 		if err := rows.Scan(
 			&i.ID,
 			&i.Status,
@@ -129,7 +129,7 @@ func (q *Queries) ListCategories(ctx context.Context, arg ListCategoriesParams) 
 }
 
 const softDeleteCategory = `-- name: SoftDeleteCategory :exec
-UPDATE catalog_write.categories SET
+UPDATE categories SET
   deleted_at = $2,
   deleted_by = $3
 WHERE id = $1
@@ -147,7 +147,7 @@ func (q *Queries) SoftDeleteCategory(ctx context.Context, arg SoftDeleteCategory
 }
 
 const updateCategory = `-- name: UpdateCategory :one
-UPDATE catalog_write.categories SET
+UPDATE categories SET
   status = $2,
   name = $3,
   parent_id = $4,
@@ -160,17 +160,17 @@ RETURNING id, status, name, parent_id, created_at, created_by, updated_at, updat
 `
 
 type UpdateCategoryParams struct {
-	ID        pgtype.UUID                `db:"id" json:"id"`
-	Status    CatalogWriteCategoryStatus `db:"status" json:"status"`
-	Name      string                     `db:"name" json:"name"`
-	ParentID  pgtype.UUID                `db:"parent_id" json:"parent_id"`
-	UpdatedAt pgtype.Timestamptz         `db:"updated_at" json:"updated_at"`
-	UpdatedBy pgtype.Text                `db:"updated_by" json:"updated_by"`
-	DeletedAt pgtype.Timestamptz         `db:"deleted_at" json:"deleted_at"`
-	DeletedBy pgtype.Text                `db:"deleted_by" json:"deleted_by"`
+	ID        pgtype.UUID        `db:"id" json:"id"`
+	Status    CategoryStatus     `db:"status" json:"status"`
+	Name      string             `db:"name" json:"name"`
+	ParentID  pgtype.UUID        `db:"parent_id" json:"parent_id"`
+	UpdatedAt pgtype.Timestamptz `db:"updated_at" json:"updated_at"`
+	UpdatedBy pgtype.Text        `db:"updated_by" json:"updated_by"`
+	DeletedAt pgtype.Timestamptz `db:"deleted_at" json:"deleted_at"`
+	DeletedBy pgtype.Text        `db:"deleted_by" json:"deleted_by"`
 }
 
-func (q *Queries) UpdateCategory(ctx context.Context, arg UpdateCategoryParams) (CatalogWriteCategory, error) {
+func (q *Queries) UpdateCategory(ctx context.Context, arg UpdateCategoryParams) (Category, error) {
 	row := q.db.QueryRow(ctx, updateCategory,
 		arg.ID,
 		arg.Status,
@@ -181,7 +181,7 @@ func (q *Queries) UpdateCategory(ctx context.Context, arg UpdateCategoryParams) 
 		arg.DeletedAt,
 		arg.DeletedBy,
 	)
-	var i CatalogWriteCategory
+	var i Category
 	err := row.Scan(
 		&i.ID,
 		&i.Status,

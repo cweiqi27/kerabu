@@ -3,7 +3,7 @@
 //   sqlc v1.31.1
 // source: providers.sql
 
-package db
+package dbwrite
 
 import (
 	"context"
@@ -12,27 +12,27 @@ import (
 )
 
 const createProvider = `-- name: CreateProvider :one
-INSERT INTO catalog_write.providers (
+INSERT INTO providers (
   id, name, status, website_url, logo_url, created_at, created_by, updated_at, updated_by, deleted_at, deleted_by
 ) VALUES ($1, $2, $3, $4, $5, $6, $7, $8, $9, $10, $11)
 RETURNING id, name, status, website_url, logo_url, created_at, created_by, updated_at, updated_by, deleted_at, deleted_by
 `
 
 type CreateProviderParams struct {
-	ID         pgtype.UUID                `db:"id" json:"id"`
-	Name       string                     `db:"name" json:"name"`
-	Status     CatalogWriteProviderStatus `db:"status" json:"status"`
-	WebsiteUrl pgtype.Text                `db:"website_url" json:"website_url"`
-	LogoUrl    pgtype.Text                `db:"logo_url" json:"logo_url"`
-	CreatedAt  pgtype.Timestamptz         `db:"created_at" json:"created_at"`
-	CreatedBy  string                     `db:"created_by" json:"created_by"`
-	UpdatedAt  pgtype.Timestamptz         `db:"updated_at" json:"updated_at"`
-	UpdatedBy  pgtype.Text                `db:"updated_by" json:"updated_by"`
-	DeletedAt  pgtype.Timestamptz         `db:"deleted_at" json:"deleted_at"`
-	DeletedBy  pgtype.Text                `db:"deleted_by" json:"deleted_by"`
+	ID         pgtype.UUID        `db:"id" json:"id"`
+	Name       string             `db:"name" json:"name"`
+	Status     ProviderStatus     `db:"status" json:"status"`
+	WebsiteUrl pgtype.Text        `db:"website_url" json:"website_url"`
+	LogoUrl    pgtype.Text        `db:"logo_url" json:"logo_url"`
+	CreatedAt  pgtype.Timestamptz `db:"created_at" json:"created_at"`
+	CreatedBy  string             `db:"created_by" json:"created_by"`
+	UpdatedAt  pgtype.Timestamptz `db:"updated_at" json:"updated_at"`
+	UpdatedBy  pgtype.Text        `db:"updated_by" json:"updated_by"`
+	DeletedAt  pgtype.Timestamptz `db:"deleted_at" json:"deleted_at"`
+	DeletedBy  pgtype.Text        `db:"deleted_by" json:"deleted_by"`
 }
 
-func (q *Queries) CreateProvider(ctx context.Context, arg CreateProviderParams) (CatalogWriteProvider, error) {
+func (q *Queries) CreateProvider(ctx context.Context, arg CreateProviderParams) (Provider, error) {
 	row := q.db.QueryRow(ctx, createProvider,
 		arg.ID,
 		arg.Name,
@@ -46,7 +46,7 @@ func (q *Queries) CreateProvider(ctx context.Context, arg CreateProviderParams) 
 		arg.DeletedAt,
 		arg.DeletedBy,
 	)
-	var i CatalogWriteProvider
+	var i Provider
 	err := row.Scan(
 		&i.ID,
 		&i.Name,
@@ -64,13 +64,13 @@ func (q *Queries) CreateProvider(ctx context.Context, arg CreateProviderParams) 
 }
 
 const getProviderByID = `-- name: GetProviderByID :one
-SELECT id, name, status, website_url, logo_url, created_at, created_by, updated_at, updated_by, deleted_at, deleted_by FROM catalog_write.providers
+SELECT id, name, status, website_url, logo_url, created_at, created_by, updated_at, updated_by, deleted_at, deleted_by FROM providers
 WHERE id = $1 AND deleted_at IS NULL
 `
 
-func (q *Queries) GetProviderByID(ctx context.Context, id pgtype.UUID) (CatalogWriteProvider, error) {
+func (q *Queries) GetProviderByID(ctx context.Context, id pgtype.UUID) (Provider, error) {
 	row := q.db.QueryRow(ctx, getProviderByID, id)
-	var i CatalogWriteProvider
+	var i Provider
 	err := row.Scan(
 		&i.ID,
 		&i.Name,
@@ -88,7 +88,7 @@ func (q *Queries) GetProviderByID(ctx context.Context, id pgtype.UUID) (CatalogW
 }
 
 const listProviders = `-- name: ListProviders :many
-SELECT id, name, status, website_url, logo_url, created_at, created_by, updated_at, updated_by, deleted_at, deleted_by FROM catalog_write.providers
+SELECT id, name, status, website_url, logo_url, created_at, created_by, updated_at, updated_by, deleted_at, deleted_by FROM providers
 WHERE deleted_at IS NULL
   AND ($1::timestamptz IS NULL OR (created_at, id) < ($1::timestamptz, $2::uuid))
 ORDER BY created_at DESC, id DESC
@@ -101,15 +101,15 @@ type ListProvidersParams struct {
 	PageSize        int32              `db:"page_size" json:"page_size"`
 }
 
-func (q *Queries) ListProviders(ctx context.Context, arg ListProvidersParams) ([]CatalogWriteProvider, error) {
+func (q *Queries) ListProviders(ctx context.Context, arg ListProvidersParams) ([]Provider, error) {
 	rows, err := q.db.Query(ctx, listProviders, arg.CursorCreatedAt, arg.CursorID, arg.PageSize)
 	if err != nil {
 		return nil, err
 	}
 	defer rows.Close()
-	items := []CatalogWriteProvider{}
+	items := []Provider{}
 	for rows.Next() {
-		var i CatalogWriteProvider
+		var i Provider
 		if err := rows.Scan(
 			&i.ID,
 			&i.Name,
@@ -134,7 +134,7 @@ func (q *Queries) ListProviders(ctx context.Context, arg ListProvidersParams) ([
 }
 
 const softDeleteProvider = `-- name: SoftDeleteProvider :exec
-UPDATE catalog_write.providers SET
+UPDATE providers SET
   deleted_at = $2,
   deleted_by = $3
 WHERE id = $1
@@ -152,7 +152,7 @@ func (q *Queries) SoftDeleteProvider(ctx context.Context, arg SoftDeleteProvider
 }
 
 const updateProvider = `-- name: UpdateProvider :one
-UPDATE catalog_write.providers SET
+UPDATE providers SET
   name = $2,
   status = $3,
   website_url = $4,
@@ -166,18 +166,18 @@ RETURNING id, name, status, website_url, logo_url, created_at, created_by, updat
 `
 
 type UpdateProviderParams struct {
-	ID         pgtype.UUID                `db:"id" json:"id"`
-	Name       string                     `db:"name" json:"name"`
-	Status     CatalogWriteProviderStatus `db:"status" json:"status"`
-	WebsiteUrl pgtype.Text                `db:"website_url" json:"website_url"`
-	LogoUrl    pgtype.Text                `db:"logo_url" json:"logo_url"`
-	UpdatedAt  pgtype.Timestamptz         `db:"updated_at" json:"updated_at"`
-	UpdatedBy  pgtype.Text                `db:"updated_by" json:"updated_by"`
-	DeletedAt  pgtype.Timestamptz         `db:"deleted_at" json:"deleted_at"`
-	DeletedBy  pgtype.Text                `db:"deleted_by" json:"deleted_by"`
+	ID         pgtype.UUID        `db:"id" json:"id"`
+	Name       string             `db:"name" json:"name"`
+	Status     ProviderStatus     `db:"status" json:"status"`
+	WebsiteUrl pgtype.Text        `db:"website_url" json:"website_url"`
+	LogoUrl    pgtype.Text        `db:"logo_url" json:"logo_url"`
+	UpdatedAt  pgtype.Timestamptz `db:"updated_at" json:"updated_at"`
+	UpdatedBy  pgtype.Text        `db:"updated_by" json:"updated_by"`
+	DeletedAt  pgtype.Timestamptz `db:"deleted_at" json:"deleted_at"`
+	DeletedBy  pgtype.Text        `db:"deleted_by" json:"deleted_by"`
 }
 
-func (q *Queries) UpdateProvider(ctx context.Context, arg UpdateProviderParams) (CatalogWriteProvider, error) {
+func (q *Queries) UpdateProvider(ctx context.Context, arg UpdateProviderParams) (Provider, error) {
 	row := q.db.QueryRow(ctx, updateProvider,
 		arg.ID,
 		arg.Name,
@@ -189,7 +189,7 @@ func (q *Queries) UpdateProvider(ctx context.Context, arg UpdateProviderParams) 
 		arg.DeletedAt,
 		arg.DeletedBy,
 	)
-	var i CatalogWriteProvider
+	var i Provider
 	err := row.Scan(
 		&i.ID,
 		&i.Name,

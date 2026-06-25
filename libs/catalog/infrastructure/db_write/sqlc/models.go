@@ -2,7 +2,7 @@
 // versions:
 //   sqlc v1.31.1
 
-package db
+package dbwrite
 
 import (
 	"database/sql/driver"
@@ -11,521 +11,479 @@ import (
 	"github.com/jackc/pgx/v5/pgtype"
 )
 
-type CatalogWriteBrandStatus string
+type BrandStatus string
 
 const (
-	CatalogWriteBrandStatusInactive CatalogWriteBrandStatus = "inactive"
-	CatalogWriteBrandStatusActive   CatalogWriteBrandStatus = "active"
-	CatalogWriteBrandStatusArchived CatalogWriteBrandStatus = "archived"
+	BrandStatusInactive BrandStatus = "inactive"
+	BrandStatusActive   BrandStatus = "active"
+	BrandStatusArchived BrandStatus = "archived"
 )
 
-func (e *CatalogWriteBrandStatus) Scan(src interface{}) error {
+func (e *BrandStatus) Scan(src interface{}) error {
 	switch s := src.(type) {
 	case []byte:
-		*e = CatalogWriteBrandStatus(s)
+		*e = BrandStatus(s)
 	case string:
-		*e = CatalogWriteBrandStatus(s)
+		*e = BrandStatus(s)
 	default:
-		return fmt.Errorf("unsupported scan type for CatalogWriteBrandStatus: %T", src)
+		return fmt.Errorf("unsupported scan type for BrandStatus: %T", src)
 	}
 	return nil
 }
 
-type NullCatalogWriteBrandStatus struct {
-	CatalogWriteBrandStatus CatalogWriteBrandStatus `json:"catalog_write_brand_status"`
-	Valid                   bool                    `json:"valid"` // Valid is true if CatalogWriteBrandStatus is not NULL
+type NullBrandStatus struct {
+	BrandStatus BrandStatus `json:"brand_status"`
+	Valid       bool        `json:"valid"` // Valid is true if BrandStatus is not NULL
 }
 
 // Scan implements the Scanner interface.
-func (ns *NullCatalogWriteBrandStatus) Scan(value interface{}) error {
+func (ns *NullBrandStatus) Scan(value interface{}) error {
 	if value == nil {
-		ns.CatalogWriteBrandStatus, ns.Valid = "", false
+		ns.BrandStatus, ns.Valid = "", false
 		return nil
 	}
 	ns.Valid = true
-	return ns.CatalogWriteBrandStatus.Scan(value)
+	return ns.BrandStatus.Scan(value)
 }
 
 // Value implements the driver Valuer interface.
-func (ns NullCatalogWriteBrandStatus) Value() (driver.Value, error) {
+func (ns NullBrandStatus) Value() (driver.Value, error) {
 	if !ns.Valid {
 		return nil, nil
 	}
-	return string(ns.CatalogWriteBrandStatus), nil
+	return string(ns.BrandStatus), nil
 }
 
-type CatalogWriteBrandVisibility string
+type BrandVisibility string
 
 const (
-	CatalogWriteBrandVisibilityOfficial  CatalogWriteBrandVisibility = "official"
-	CatalogWriteBrandVisibilityCommunity CatalogWriteBrandVisibility = "community"
-	CatalogWriteBrandVisibilityPrivate   CatalogWriteBrandVisibility = "private"
+	BrandVisibilityOfficial  BrandVisibility = "official"
+	BrandVisibilityCommunity BrandVisibility = "community"
+	BrandVisibilityPrivate   BrandVisibility = "private"
 )
 
-func (e *CatalogWriteBrandVisibility) Scan(src interface{}) error {
+func (e *BrandVisibility) Scan(src interface{}) error {
 	switch s := src.(type) {
 	case []byte:
-		*e = CatalogWriteBrandVisibility(s)
+		*e = BrandVisibility(s)
 	case string:
-		*e = CatalogWriteBrandVisibility(s)
+		*e = BrandVisibility(s)
 	default:
-		return fmt.Errorf("unsupported scan type for CatalogWriteBrandVisibility: %T", src)
+		return fmt.Errorf("unsupported scan type for BrandVisibility: %T", src)
 	}
 	return nil
 }
 
-type NullCatalogWriteBrandVisibility struct {
-	CatalogWriteBrandVisibility CatalogWriteBrandVisibility `json:"catalog_write_brand_visibility"`
-	Valid                       bool                        `json:"valid"` // Valid is true if CatalogWriteBrandVisibility is not NULL
+type NullBrandVisibility struct {
+	BrandVisibility BrandVisibility `json:"brand_visibility"`
+	Valid           bool            `json:"valid"` // Valid is true if BrandVisibility is not NULL
 }
 
 // Scan implements the Scanner interface.
-func (ns *NullCatalogWriteBrandVisibility) Scan(value interface{}) error {
+func (ns *NullBrandVisibility) Scan(value interface{}) error {
 	if value == nil {
-		ns.CatalogWriteBrandVisibility, ns.Valid = "", false
+		ns.BrandVisibility, ns.Valid = "", false
 		return nil
 	}
 	ns.Valid = true
-	return ns.CatalogWriteBrandVisibility.Scan(value)
+	return ns.BrandVisibility.Scan(value)
 }
 
 // Value implements the driver Valuer interface.
-func (ns NullCatalogWriteBrandVisibility) Value() (driver.Value, error) {
+func (ns NullBrandVisibility) Value() (driver.Value, error) {
 	if !ns.Valid {
 		return nil, nil
 	}
-	return string(ns.CatalogWriteBrandVisibility), nil
+	return string(ns.BrandVisibility), nil
 }
 
-type CatalogWriteCategoryStatus string
+type CategoryStatus string
 
 const (
-	CatalogWriteCategoryStatusInactive CatalogWriteCategoryStatus = "inactive"
-	CatalogWriteCategoryStatusActive   CatalogWriteCategoryStatus = "active"
-	CatalogWriteCategoryStatusArchived CatalogWriteCategoryStatus = "archived"
+	CategoryStatusInactive CategoryStatus = "inactive"
+	CategoryStatusActive   CategoryStatus = "active"
+	CategoryStatusArchived CategoryStatus = "archived"
 )
 
-func (e *CatalogWriteCategoryStatus) Scan(src interface{}) error {
+func (e *CategoryStatus) Scan(src interface{}) error {
 	switch s := src.(type) {
 	case []byte:
-		*e = CatalogWriteCategoryStatus(s)
+		*e = CategoryStatus(s)
 	case string:
-		*e = CatalogWriteCategoryStatus(s)
+		*e = CategoryStatus(s)
 	default:
-		return fmt.Errorf("unsupported scan type for CatalogWriteCategoryStatus: %T", src)
+		return fmt.Errorf("unsupported scan type for CategoryStatus: %T", src)
 	}
 	return nil
 }
 
-type NullCatalogWriteCategoryStatus struct {
-	CatalogWriteCategoryStatus CatalogWriteCategoryStatus `json:"catalog_write_category_status"`
-	Valid                      bool                       `json:"valid"` // Valid is true if CatalogWriteCategoryStatus is not NULL
+type NullCategoryStatus struct {
+	CategoryStatus CategoryStatus `json:"category_status"`
+	Valid          bool           `json:"valid"` // Valid is true if CategoryStatus is not NULL
 }
 
 // Scan implements the Scanner interface.
-func (ns *NullCatalogWriteCategoryStatus) Scan(value interface{}) error {
+func (ns *NullCategoryStatus) Scan(value interface{}) error {
 	if value == nil {
-		ns.CatalogWriteCategoryStatus, ns.Valid = "", false
+		ns.CategoryStatus, ns.Valid = "", false
 		return nil
 	}
 	ns.Valid = true
-	return ns.CatalogWriteCategoryStatus.Scan(value)
+	return ns.CategoryStatus.Scan(value)
 }
 
 // Value implements the driver Valuer interface.
-func (ns NullCatalogWriteCategoryStatus) Value() (driver.Value, error) {
+func (ns NullCategoryStatus) Value() (driver.Value, error) {
 	if !ns.Valid {
 		return nil, nil
 	}
-	return string(ns.CatalogWriteCategoryStatus), nil
+	return string(ns.CategoryStatus), nil
 }
 
-type CatalogWriteOutboxArchiveStatus string
+type OutboxArchiveStatus string
 
 const (
-	CatalogWriteOutboxArchiveStatusSuccess CatalogWriteOutboxArchiveStatus = "success"
-	CatalogWriteOutboxArchiveStatusFailed  CatalogWriteOutboxArchiveStatus = "failed"
+	OutboxArchiveStatusSuccess OutboxArchiveStatus = "success"
+	OutboxArchiveStatusFailed  OutboxArchiveStatus = "failed"
 )
 
-func (e *CatalogWriteOutboxArchiveStatus) Scan(src interface{}) error {
+func (e *OutboxArchiveStatus) Scan(src interface{}) error {
 	switch s := src.(type) {
 	case []byte:
-		*e = CatalogWriteOutboxArchiveStatus(s)
+		*e = OutboxArchiveStatus(s)
 	case string:
-		*e = CatalogWriteOutboxArchiveStatus(s)
+		*e = OutboxArchiveStatus(s)
 	default:
-		return fmt.Errorf("unsupported scan type for CatalogWriteOutboxArchiveStatus: %T", src)
+		return fmt.Errorf("unsupported scan type for OutboxArchiveStatus: %T", src)
 	}
 	return nil
 }
 
-type NullCatalogWriteOutboxArchiveStatus struct {
-	CatalogWriteOutboxArchiveStatus CatalogWriteOutboxArchiveStatus `json:"catalog_write_outbox_archive_status"`
-	Valid                           bool                            `json:"valid"` // Valid is true if CatalogWriteOutboxArchiveStatus is not NULL
+type NullOutboxArchiveStatus struct {
+	OutboxArchiveStatus OutboxArchiveStatus `json:"outbox_archive_status"`
+	Valid               bool                `json:"valid"` // Valid is true if OutboxArchiveStatus is not NULL
 }
 
 // Scan implements the Scanner interface.
-func (ns *NullCatalogWriteOutboxArchiveStatus) Scan(value interface{}) error {
+func (ns *NullOutboxArchiveStatus) Scan(value interface{}) error {
 	if value == nil {
-		ns.CatalogWriteOutboxArchiveStatus, ns.Valid = "", false
+		ns.OutboxArchiveStatus, ns.Valid = "", false
 		return nil
 	}
 	ns.Valid = true
-	return ns.CatalogWriteOutboxArchiveStatus.Scan(value)
+	return ns.OutboxArchiveStatus.Scan(value)
 }
 
 // Value implements the driver Valuer interface.
-func (ns NullCatalogWriteOutboxArchiveStatus) Value() (driver.Value, error) {
+func (ns NullOutboxArchiveStatus) Value() (driver.Value, error) {
 	if !ns.Valid {
 		return nil, nil
 	}
-	return string(ns.CatalogWriteOutboxArchiveStatus), nil
+	return string(ns.OutboxArchiveStatus), nil
 }
 
-type CatalogWriteOutboxEventStatus string
+type OutboxEventStatus string
 
 const (
-	CatalogWriteOutboxEventStatusPending    CatalogWriteOutboxEventStatus = "pending"
-	CatalogWriteOutboxEventStatusProcessing CatalogWriteOutboxEventStatus = "processing"
-	CatalogWriteOutboxEventStatusFailed     CatalogWriteOutboxEventStatus = "failed"
+	OutboxEventStatusPending    OutboxEventStatus = "pending"
+	OutboxEventStatusProcessing OutboxEventStatus = "processing"
+	OutboxEventStatusFailed     OutboxEventStatus = "failed"
 )
 
-func (e *CatalogWriteOutboxEventStatus) Scan(src interface{}) error {
+func (e *OutboxEventStatus) Scan(src interface{}) error {
 	switch s := src.(type) {
 	case []byte:
-		*e = CatalogWriteOutboxEventStatus(s)
+		*e = OutboxEventStatus(s)
 	case string:
-		*e = CatalogWriteOutboxEventStatus(s)
+		*e = OutboxEventStatus(s)
 	default:
-		return fmt.Errorf("unsupported scan type for CatalogWriteOutboxEventStatus: %T", src)
+		return fmt.Errorf("unsupported scan type for OutboxEventStatus: %T", src)
 	}
 	return nil
 }
 
-type NullCatalogWriteOutboxEventStatus struct {
-	CatalogWriteOutboxEventStatus CatalogWriteOutboxEventStatus `json:"catalog_write_outbox_event_status"`
-	Valid                         bool                          `json:"valid"` // Valid is true if CatalogWriteOutboxEventStatus is not NULL
+type NullOutboxEventStatus struct {
+	OutboxEventStatus OutboxEventStatus `json:"outbox_event_status"`
+	Valid             bool              `json:"valid"` // Valid is true if OutboxEventStatus is not NULL
 }
 
 // Scan implements the Scanner interface.
-func (ns *NullCatalogWriteOutboxEventStatus) Scan(value interface{}) error {
+func (ns *NullOutboxEventStatus) Scan(value interface{}) error {
 	if value == nil {
-		ns.CatalogWriteOutboxEventStatus, ns.Valid = "", false
+		ns.OutboxEventStatus, ns.Valid = "", false
 		return nil
 	}
 	ns.Valid = true
-	return ns.CatalogWriteOutboxEventStatus.Scan(value)
+	return ns.OutboxEventStatus.Scan(value)
 }
 
 // Value implements the driver Valuer interface.
-func (ns NullCatalogWriteOutboxEventStatus) Value() (driver.Value, error) {
+func (ns NullOutboxEventStatus) Value() (driver.Value, error) {
 	if !ns.Valid {
 		return nil, nil
 	}
-	return string(ns.CatalogWriteOutboxEventStatus), nil
+	return string(ns.OutboxEventStatus), nil
 }
 
-type CatalogWriteProductNetUnit string
+type ProductNetUnit string
 
 const (
-	CatalogWriteProductNetUnitG  CatalogWriteProductNetUnit = "g"
-	CatalogWriteProductNetUnitKg CatalogWriteProductNetUnit = "kg"
-	CatalogWriteProductNetUnitMl CatalogWriteProductNetUnit = "ml"
-	CatalogWriteProductNetUnitL  CatalogWriteProductNetUnit = "l"
+	ProductNetUnitG  ProductNetUnit = "g"
+	ProductNetUnitKg ProductNetUnit = "kg"
+	ProductNetUnitMl ProductNetUnit = "ml"
+	ProductNetUnitL  ProductNetUnit = "l"
 )
 
-func (e *CatalogWriteProductNetUnit) Scan(src interface{}) error {
+func (e *ProductNetUnit) Scan(src interface{}) error {
 	switch s := src.(type) {
 	case []byte:
-		*e = CatalogWriteProductNetUnit(s)
+		*e = ProductNetUnit(s)
 	case string:
-		*e = CatalogWriteProductNetUnit(s)
+		*e = ProductNetUnit(s)
 	default:
-		return fmt.Errorf("unsupported scan type for CatalogWriteProductNetUnit: %T", src)
+		return fmt.Errorf("unsupported scan type for ProductNetUnit: %T", src)
 	}
 	return nil
 }
 
-type NullCatalogWriteProductNetUnit struct {
-	CatalogWriteProductNetUnit CatalogWriteProductNetUnit `json:"catalog_write_product_net_unit"`
-	Valid                      bool                       `json:"valid"` // Valid is true if CatalogWriteProductNetUnit is not NULL
+type NullProductNetUnit struct {
+	ProductNetUnit ProductNetUnit `json:"product_net_unit"`
+	Valid          bool           `json:"valid"` // Valid is true if ProductNetUnit is not NULL
 }
 
 // Scan implements the Scanner interface.
-func (ns *NullCatalogWriteProductNetUnit) Scan(value interface{}) error {
+func (ns *NullProductNetUnit) Scan(value interface{}) error {
 	if value == nil {
-		ns.CatalogWriteProductNetUnit, ns.Valid = "", false
+		ns.ProductNetUnit, ns.Valid = "", false
 		return nil
 	}
 	ns.Valid = true
-	return ns.CatalogWriteProductNetUnit.Scan(value)
+	return ns.ProductNetUnit.Scan(value)
 }
 
 // Value implements the driver Valuer interface.
-func (ns NullCatalogWriteProductNetUnit) Value() (driver.Value, error) {
+func (ns NullProductNetUnit) Value() (driver.Value, error) {
 	if !ns.Valid {
 		return nil, nil
 	}
-	return string(ns.CatalogWriteProductNetUnit), nil
+	return string(ns.ProductNetUnit), nil
 }
 
-type CatalogWriteProductStatus string
+type ProductStatus string
 
 const (
-	CatalogWriteProductStatusInactive CatalogWriteProductStatus = "inactive"
-	CatalogWriteProductStatusActive   CatalogWriteProductStatus = "active"
-	CatalogWriteProductStatusArchived CatalogWriteProductStatus = "archived"
+	ProductStatusInactive ProductStatus = "inactive"
+	ProductStatusActive   ProductStatus = "active"
+	ProductStatusArchived ProductStatus = "archived"
 )
 
-func (e *CatalogWriteProductStatus) Scan(src interface{}) error {
+func (e *ProductStatus) Scan(src interface{}) error {
 	switch s := src.(type) {
 	case []byte:
-		*e = CatalogWriteProductStatus(s)
+		*e = ProductStatus(s)
 	case string:
-		*e = CatalogWriteProductStatus(s)
+		*e = ProductStatus(s)
 	default:
-		return fmt.Errorf("unsupported scan type for CatalogWriteProductStatus: %T", src)
+		return fmt.Errorf("unsupported scan type for ProductStatus: %T", src)
 	}
 	return nil
 }
 
-type NullCatalogWriteProductStatus struct {
-	CatalogWriteProductStatus CatalogWriteProductStatus `json:"catalog_write_product_status"`
-	Valid                     bool                      `json:"valid"` // Valid is true if CatalogWriteProductStatus is not NULL
+type NullProductStatus struct {
+	ProductStatus ProductStatus `json:"product_status"`
+	Valid         bool          `json:"valid"` // Valid is true if ProductStatus is not NULL
 }
 
 // Scan implements the Scanner interface.
-func (ns *NullCatalogWriteProductStatus) Scan(value interface{}) error {
+func (ns *NullProductStatus) Scan(value interface{}) error {
 	if value == nil {
-		ns.CatalogWriteProductStatus, ns.Valid = "", false
+		ns.ProductStatus, ns.Valid = "", false
 		return nil
 	}
 	ns.Valid = true
-	return ns.CatalogWriteProductStatus.Scan(value)
+	return ns.ProductStatus.Scan(value)
 }
 
 // Value implements the driver Valuer interface.
-func (ns NullCatalogWriteProductStatus) Value() (driver.Value, error) {
+func (ns NullProductStatus) Value() (driver.Value, error) {
 	if !ns.Valid {
 		return nil, nil
 	}
-	return string(ns.CatalogWriteProductStatus), nil
+	return string(ns.ProductStatus), nil
 }
 
-type CatalogWriteProductVisibility string
+type ProductVisibility string
 
 const (
-	CatalogWriteProductVisibilityOfficial  CatalogWriteProductVisibility = "official"
-	CatalogWriteProductVisibilityCommunity CatalogWriteProductVisibility = "community"
-	CatalogWriteProductVisibilityPrivate   CatalogWriteProductVisibility = "private"
+	ProductVisibilityOfficial  ProductVisibility = "official"
+	ProductVisibilityCommunity ProductVisibility = "community"
+	ProductVisibilityPrivate   ProductVisibility = "private"
 )
 
-func (e *CatalogWriteProductVisibility) Scan(src interface{}) error {
+func (e *ProductVisibility) Scan(src interface{}) error {
 	switch s := src.(type) {
 	case []byte:
-		*e = CatalogWriteProductVisibility(s)
+		*e = ProductVisibility(s)
 	case string:
-		*e = CatalogWriteProductVisibility(s)
+		*e = ProductVisibility(s)
 	default:
-		return fmt.Errorf("unsupported scan type for CatalogWriteProductVisibility: %T", src)
+		return fmt.Errorf("unsupported scan type for ProductVisibility: %T", src)
 	}
 	return nil
 }
 
-type NullCatalogWriteProductVisibility struct {
-	CatalogWriteProductVisibility CatalogWriteProductVisibility `json:"catalog_write_product_visibility"`
-	Valid                         bool                          `json:"valid"` // Valid is true if CatalogWriteProductVisibility is not NULL
+type NullProductVisibility struct {
+	ProductVisibility ProductVisibility `json:"product_visibility"`
+	Valid             bool              `json:"valid"` // Valid is true if ProductVisibility is not NULL
 }
 
 // Scan implements the Scanner interface.
-func (ns *NullCatalogWriteProductVisibility) Scan(value interface{}) error {
+func (ns *NullProductVisibility) Scan(value interface{}) error {
 	if value == nil {
-		ns.CatalogWriteProductVisibility, ns.Valid = "", false
+		ns.ProductVisibility, ns.Valid = "", false
 		return nil
 	}
 	ns.Valid = true
-	return ns.CatalogWriteProductVisibility.Scan(value)
+	return ns.ProductVisibility.Scan(value)
 }
 
 // Value implements the driver Valuer interface.
-func (ns NullCatalogWriteProductVisibility) Value() (driver.Value, error) {
+func (ns NullProductVisibility) Value() (driver.Value, error) {
 	if !ns.Valid {
 		return nil, nil
 	}
-	return string(ns.CatalogWriteProductVisibility), nil
+	return string(ns.ProductVisibility), nil
 }
 
-type CatalogWriteProviderRawDataStatus string
+type ProviderRawDataStatus string
 
 const (
-	CatalogWriteProviderRawDataStatusPending   CatalogWriteProviderRawDataStatus = "pending"
-	CatalogWriteProviderRawDataStatusProcessed CatalogWriteProviderRawDataStatus = "processed"
-	CatalogWriteProviderRawDataStatusFailed    CatalogWriteProviderRawDataStatus = "failed"
+	ProviderRawDataStatusPending   ProviderRawDataStatus = "pending"
+	ProviderRawDataStatusProcessed ProviderRawDataStatus = "processed"
+	ProviderRawDataStatusFailed    ProviderRawDataStatus = "failed"
 )
 
-func (e *CatalogWriteProviderRawDataStatus) Scan(src interface{}) error {
+func (e *ProviderRawDataStatus) Scan(src interface{}) error {
 	switch s := src.(type) {
 	case []byte:
-		*e = CatalogWriteProviderRawDataStatus(s)
+		*e = ProviderRawDataStatus(s)
 	case string:
-		*e = CatalogWriteProviderRawDataStatus(s)
+		*e = ProviderRawDataStatus(s)
 	default:
-		return fmt.Errorf("unsupported scan type for CatalogWriteProviderRawDataStatus: %T", src)
+		return fmt.Errorf("unsupported scan type for ProviderRawDataStatus: %T", src)
 	}
 	return nil
 }
 
-type NullCatalogWriteProviderRawDataStatus struct {
-	CatalogWriteProviderRawDataStatus CatalogWriteProviderRawDataStatus `json:"catalog_write_provider_raw_data_status"`
-	Valid                             bool                              `json:"valid"` // Valid is true if CatalogWriteProviderRawDataStatus is not NULL
+type NullProviderRawDataStatus struct {
+	ProviderRawDataStatus ProviderRawDataStatus `json:"provider_raw_data_status"`
+	Valid                 bool                  `json:"valid"` // Valid is true if ProviderRawDataStatus is not NULL
 }
 
 // Scan implements the Scanner interface.
-func (ns *NullCatalogWriteProviderRawDataStatus) Scan(value interface{}) error {
+func (ns *NullProviderRawDataStatus) Scan(value interface{}) error {
 	if value == nil {
-		ns.CatalogWriteProviderRawDataStatus, ns.Valid = "", false
+		ns.ProviderRawDataStatus, ns.Valid = "", false
 		return nil
 	}
 	ns.Valid = true
-	return ns.CatalogWriteProviderRawDataStatus.Scan(value)
+	return ns.ProviderRawDataStatus.Scan(value)
 }
 
 // Value implements the driver Valuer interface.
-func (ns NullCatalogWriteProviderRawDataStatus) Value() (driver.Value, error) {
+func (ns NullProviderRawDataStatus) Value() (driver.Value, error) {
 	if !ns.Valid {
 		return nil, nil
 	}
-	return string(ns.CatalogWriteProviderRawDataStatus), nil
+	return string(ns.ProviderRawDataStatus), nil
 }
 
-type CatalogWriteProviderStatus string
+type ProviderStatus string
 
 const (
-	CatalogWriteProviderStatusInactive CatalogWriteProviderStatus = "inactive"
-	CatalogWriteProviderStatusActive   CatalogWriteProviderStatus = "active"
-	CatalogWriteProviderStatusArchived CatalogWriteProviderStatus = "archived"
+	ProviderStatusInactive ProviderStatus = "inactive"
+	ProviderStatusActive   ProviderStatus = "active"
+	ProviderStatusArchived ProviderStatus = "archived"
 )
 
-func (e *CatalogWriteProviderStatus) Scan(src interface{}) error {
+func (e *ProviderStatus) Scan(src interface{}) error {
 	switch s := src.(type) {
 	case []byte:
-		*e = CatalogWriteProviderStatus(s)
+		*e = ProviderStatus(s)
 	case string:
-		*e = CatalogWriteProviderStatus(s)
+		*e = ProviderStatus(s)
 	default:
-		return fmt.Errorf("unsupported scan type for CatalogWriteProviderStatus: %T", src)
+		return fmt.Errorf("unsupported scan type for ProviderStatus: %T", src)
 	}
 	return nil
 }
 
-type NullCatalogWriteProviderStatus struct {
-	CatalogWriteProviderStatus CatalogWriteProviderStatus `json:"catalog_write_provider_status"`
-	Valid                      bool                       `json:"valid"` // Valid is true if CatalogWriteProviderStatus is not NULL
+type NullProviderStatus struct {
+	ProviderStatus ProviderStatus `json:"provider_status"`
+	Valid          bool           `json:"valid"` // Valid is true if ProviderStatus is not NULL
 }
 
 // Scan implements the Scanner interface.
-func (ns *NullCatalogWriteProviderStatus) Scan(value interface{}) error {
+func (ns *NullProviderStatus) Scan(value interface{}) error {
 	if value == nil {
-		ns.CatalogWriteProviderStatus, ns.Valid = "", false
+		ns.ProviderStatus, ns.Valid = "", false
 		return nil
 	}
 	ns.Valid = true
-	return ns.CatalogWriteProviderStatus.Scan(value)
+	return ns.ProviderStatus.Scan(value)
 }
 
 // Value implements the driver Valuer interface.
-func (ns NullCatalogWriteProviderStatus) Value() (driver.Value, error) {
+func (ns NullProviderStatus) Value() (driver.Value, error) {
 	if !ns.Valid {
 		return nil, nil
 	}
-	return string(ns.CatalogWriteProviderStatus), nil
+	return string(ns.ProviderStatus), nil
 }
 
-type CatalogReadViewBrand struct {
-	BrandID      pgtype.UUID        `db:"brand_id" json:"brand_id"`
-	BrandName    string             `db:"brand_name" json:"brand_name"`
-	Status       string             `db:"status" json:"status"`
-	OwnerID      pgtype.UUID        `db:"owner_id" json:"owner_id"`
-	Visibility   string             `db:"visibility" json:"visibility"`
-	Tags         []byte             `db:"tags" json:"tags"`
-	ProductCount int32              `db:"product_count" json:"product_count"`
-	TagCount     int32              `db:"tag_count" json:"tag_count"`
-	LogoUrl      pgtype.Text        `db:"logo_url" json:"logo_url"`
-	CreatedAt    pgtype.Timestamptz `db:"created_at" json:"created_at"`
-	UpdatedAt    pgtype.Timestamptz `db:"updated_at" json:"updated_at"`
+type Brand struct {
+	ID         pgtype.UUID        `db:"id" json:"id"`
+	Name       string             `db:"name" json:"name"`
+	Status     BrandStatus        `db:"status" json:"status"`
+	LogoUrl    pgtype.Text        `db:"logo_url" json:"logo_url"`
+	OwnerID    pgtype.UUID        `db:"owner_id" json:"owner_id"`
+	Visibility BrandVisibility    `db:"visibility" json:"visibility"`
+	CreatedAt  pgtype.Timestamptz `db:"created_at" json:"created_at"`
+	CreatedBy  string             `db:"created_by" json:"created_by"`
+	UpdatedAt  pgtype.Timestamptz `db:"updated_at" json:"updated_at"`
+	UpdatedBy  pgtype.Text        `db:"updated_by" json:"updated_by"`
+	DeletedAt  pgtype.Timestamptz `db:"deleted_at" json:"deleted_at"`
+	DeletedBy  pgtype.Text        `db:"deleted_by" json:"deleted_by"`
 }
 
-type CatalogReadViewCategory struct {
-	CategoryID   pgtype.UUID        `db:"category_id" json:"category_id"`
-	CategoryName string             `db:"category_name" json:"category_name"`
-	Status       string             `db:"status" json:"status"`
-	Parent       []byte             `db:"parent" json:"parent"`
-	CreatedAt    pgtype.Timestamptz `db:"created_at" json:"created_at"`
-	UpdatedAt    pgtype.Timestamptz `db:"updated_at" json:"updated_at"`
-}
-
-type CatalogReadViewProduct struct {
-	ProductID       pgtype.UUID        `db:"product_id" json:"product_id"`
-	ProductName     string             `db:"product_name" json:"product_name"`
-	Barcode         pgtype.Text        `db:"barcode" json:"barcode"`
-	Status          string             `db:"status" json:"status"`
-	OwnerID         pgtype.UUID        `db:"owner_id" json:"owner_id"`
-	Visibility      string             `db:"visibility" json:"visibility"`
-	Brands          []byte             `db:"brands" json:"brands"`
-	Categories      []byte             `db:"categories" json:"categories"`
-	QuantityDisplay string             `db:"quantity_display" json:"quantity_display"`
-	NetValue        pgtype.Numeric     `db:"net_value" json:"net_value"`
-	NetUnit         string             `db:"net_unit" json:"net_unit"`
-	ImageUrl        pgtype.Text        `db:"image_url" json:"image_url"`
-	Nutriscore      pgtype.Text        `db:"nutriscore" json:"nutriscore"`
-	NovaGroup       pgtype.Int4        `db:"nova_group" json:"nova_group"`
-	CreatedAt       pgtype.Timestamptz `db:"created_at" json:"created_at"`
-	UpdatedAt       pgtype.Timestamptz `db:"updated_at" json:"updated_at"`
-}
-
-type CatalogWriteBrand struct {
-	ID         pgtype.UUID                 `db:"id" json:"id"`
-	Name       string                      `db:"name" json:"name"`
-	Status     CatalogWriteBrandStatus     `db:"status" json:"status"`
-	LogoUrl    pgtype.Text                 `db:"logo_url" json:"logo_url"`
-	OwnerID    pgtype.UUID                 `db:"owner_id" json:"owner_id"`
-	Visibility CatalogWriteBrandVisibility `db:"visibility" json:"visibility"`
-	CreatedAt  pgtype.Timestamptz          `db:"created_at" json:"created_at"`
-	CreatedBy  string                      `db:"created_by" json:"created_by"`
-	UpdatedAt  pgtype.Timestamptz          `db:"updated_at" json:"updated_at"`
-	UpdatedBy  pgtype.Text                 `db:"updated_by" json:"updated_by"`
-	DeletedAt  pgtype.Timestamptz          `db:"deleted_at" json:"deleted_at"`
-	DeletedBy  pgtype.Text                 `db:"deleted_by" json:"deleted_by"`
-}
-
-type CatalogWriteBrandTag struct {
+type BrandTag struct {
 	BrandID   pgtype.UUID        `db:"brand_id" json:"brand_id"`
 	TagID     pgtype.UUID        `db:"tag_id" json:"tag_id"`
 	CreatedAt pgtype.Timestamptz `db:"created_at" json:"created_at"`
 	CreatedBy string             `db:"created_by" json:"created_by"`
 }
 
-type CatalogWriteCategory struct {
-	ID        pgtype.UUID                `db:"id" json:"id"`
-	Status    CatalogWriteCategoryStatus `db:"status" json:"status"`
-	Name      string                     `db:"name" json:"name"`
-	ParentID  pgtype.UUID                `db:"parent_id" json:"parent_id"`
-	CreatedAt pgtype.Timestamptz         `db:"created_at" json:"created_at"`
-	CreatedBy string                     `db:"created_by" json:"created_by"`
-	UpdatedAt pgtype.Timestamptz         `db:"updated_at" json:"updated_at"`
-	UpdatedBy pgtype.Text                `db:"updated_by" json:"updated_by"`
-	DeletedAt pgtype.Timestamptz         `db:"deleted_at" json:"deleted_at"`
-	DeletedBy pgtype.Text                `db:"deleted_by" json:"deleted_by"`
+type Category struct {
+	ID        pgtype.UUID        `db:"id" json:"id"`
+	Status    CategoryStatus     `db:"status" json:"status"`
+	Name      string             `db:"name" json:"name"`
+	ParentID  pgtype.UUID        `db:"parent_id" json:"parent_id"`
+	CreatedAt pgtype.Timestamptz `db:"created_at" json:"created_at"`
+	CreatedBy string             `db:"created_by" json:"created_by"`
+	UpdatedAt pgtype.Timestamptz `db:"updated_at" json:"updated_at"`
+	UpdatedBy pgtype.Text        `db:"updated_by" json:"updated_by"`
+	DeletedAt pgtype.Timestamptz `db:"deleted_at" json:"deleted_at"`
+	DeletedBy pgtype.Text        `db:"deleted_by" json:"deleted_by"`
 }
 
-type CatalogWriteCategoryTag struct {
+type CategoryTag struct {
 	CategoryID pgtype.UUID        `db:"category_id" json:"category_id"`
 	TagID      pgtype.UUID        `db:"tag_id" json:"tag_id"`
 	CreatedAt  pgtype.Timestamptz `db:"created_at" json:"created_at"`
 	CreatedBy  string             `db:"created_by" json:"created_by"`
 }
 
-type CatalogWriteIdempotencyKey struct {
+type IdempotencyKey struct {
 	KeyID       pgtype.UUID        `db:"key_id" json:"key_id"`
 	RequestHash string             `db:"request_hash" json:"request_hash"`
 	Response    []byte             `db:"response" json:"response"`
@@ -533,100 +491,100 @@ type CatalogWriteIdempotencyKey struct {
 	CreatedAt   pgtype.Timestamptz `db:"created_at" json:"created_at"`
 }
 
-type CatalogWriteOutboxArchive struct {
-	ID             pgtype.UUID                     `db:"id" json:"id"`
-	OutboxEventID  pgtype.UUID                     `db:"outbox_event_id" json:"outbox_event_id"`
-	TraceID        pgtype.UUID                     `db:"trace_id" json:"trace_id"`
-	Event          string                          `db:"event" json:"event"`
-	Payload        []byte                          `db:"payload" json:"payload"`
-	Status         CatalogWriteOutboxArchiveStatus `db:"status" json:"status"`
-	RetryCount     int32                           `db:"retry_count" json:"retry_count"`
-	EventCreatedAt pgtype.Timestamptz              `db:"event_created_at" json:"event_created_at"`
-	ArchivedAt     pgtype.Timestamptz              `db:"archived_at" json:"archived_at"`
+type OutboxArchive struct {
+	ID             pgtype.UUID         `db:"id" json:"id"`
+	OutboxEventID  pgtype.UUID         `db:"outbox_event_id" json:"outbox_event_id"`
+	TraceID        pgtype.UUID         `db:"trace_id" json:"trace_id"`
+	Event          string              `db:"event" json:"event"`
+	Payload        []byte              `db:"payload" json:"payload"`
+	Status         OutboxArchiveStatus `db:"status" json:"status"`
+	RetryCount     int32               `db:"retry_count" json:"retry_count"`
+	EventCreatedAt pgtype.Timestamptz  `db:"event_created_at" json:"event_created_at"`
+	ArchivedAt     pgtype.Timestamptz  `db:"archived_at" json:"archived_at"`
 }
 
-type CatalogWriteOutboxEvent struct {
-	ID         pgtype.UUID                   `db:"id" json:"id"`
-	TraceID    pgtype.UUID                   `db:"trace_id" json:"trace_id"`
-	Event      string                        `db:"event" json:"event"`
-	Payload    []byte                        `db:"payload" json:"payload"`
-	Status     CatalogWriteOutboxEventStatus `db:"status" json:"status"`
-	RetryCount int32                         `db:"retry_count" json:"retry_count"`
-	CreatedAt  pgtype.Timestamptz            `db:"created_at" json:"created_at"`
-	UpdatedAt  pgtype.Timestamptz            `db:"updated_at" json:"updated_at"`
+type OutboxEvent struct {
+	ID         pgtype.UUID        `db:"id" json:"id"`
+	TraceID    pgtype.UUID        `db:"trace_id" json:"trace_id"`
+	Event      string             `db:"event" json:"event"`
+	Payload    []byte             `db:"payload" json:"payload"`
+	Status     OutboxEventStatus  `db:"status" json:"status"`
+	RetryCount int32              `db:"retry_count" json:"retry_count"`
+	CreatedAt  pgtype.Timestamptz `db:"created_at" json:"created_at"`
+	UpdatedAt  pgtype.Timestamptz `db:"updated_at" json:"updated_at"`
 }
 
-type CatalogWriteProcessedMessage struct {
+type ProcessedMessage struct {
 	MessageID   string             `db:"message_id" json:"message_id"`
 	ProcessedAt pgtype.Timestamptz `db:"processed_at" json:"processed_at"`
 }
 
-type CatalogWriteProduct struct {
-	ID         pgtype.UUID                   `db:"id" json:"id"`
-	Status     CatalogWriteProductStatus     `db:"status" json:"status"`
-	Name       string                        `db:"name" json:"name"`
-	Barcode    pgtype.Text                   `db:"barcode" json:"barcode"`
-	NetValue   pgtype.Numeric                `db:"net_value" json:"net_value"`
-	NetUnit    CatalogWriteProductNetUnit    `db:"net_unit" json:"net_unit"`
-	ImageUrl   pgtype.Text                   `db:"image_url" json:"image_url"`
-	Nutriscore pgtype.Text                   `db:"nutriscore" json:"nutriscore"`
-	NovaGroup  pgtype.Int4                   `db:"nova_group" json:"nova_group"`
-	OwnerID    pgtype.UUID                   `db:"owner_id" json:"owner_id"`
-	Visibility CatalogWriteProductVisibility `db:"visibility" json:"visibility"`
-	CreatedAt  pgtype.Timestamptz            `db:"created_at" json:"created_at"`
-	CreatedBy  string                        `db:"created_by" json:"created_by"`
-	UpdatedAt  pgtype.Timestamptz            `db:"updated_at" json:"updated_at"`
-	UpdatedBy  pgtype.Text                   `db:"updated_by" json:"updated_by"`
-	DeletedAt  pgtype.Timestamptz            `db:"deleted_at" json:"deleted_at"`
-	DeletedBy  pgtype.Text                   `db:"deleted_by" json:"deleted_by"`
+type Product struct {
+	ID         pgtype.UUID        `db:"id" json:"id"`
+	Status     ProductStatus      `db:"status" json:"status"`
+	Name       string             `db:"name" json:"name"`
+	Barcode    pgtype.Text        `db:"barcode" json:"barcode"`
+	NetValue   pgtype.Numeric     `db:"net_value" json:"net_value"`
+	NetUnit    ProductNetUnit     `db:"net_unit" json:"net_unit"`
+	ImageUrl   pgtype.Text        `db:"image_url" json:"image_url"`
+	Nutriscore pgtype.Text        `db:"nutriscore" json:"nutriscore"`
+	NovaGroup  pgtype.Int4        `db:"nova_group" json:"nova_group"`
+	OwnerID    pgtype.UUID        `db:"owner_id" json:"owner_id"`
+	Visibility ProductVisibility  `db:"visibility" json:"visibility"`
+	CreatedAt  pgtype.Timestamptz `db:"created_at" json:"created_at"`
+	CreatedBy  string             `db:"created_by" json:"created_by"`
+	UpdatedAt  pgtype.Timestamptz `db:"updated_at" json:"updated_at"`
+	UpdatedBy  pgtype.Text        `db:"updated_by" json:"updated_by"`
+	DeletedAt  pgtype.Timestamptz `db:"deleted_at" json:"deleted_at"`
+	DeletedBy  pgtype.Text        `db:"deleted_by" json:"deleted_by"`
 }
 
-type CatalogWriteProductBrand struct {
+type ProductBrand struct {
 	ProductID pgtype.UUID        `db:"product_id" json:"product_id"`
 	BrandID   pgtype.UUID        `db:"brand_id" json:"brand_id"`
 	CreatedAt pgtype.Timestamptz `db:"created_at" json:"created_at"`
 	CreatedBy string             `db:"created_by" json:"created_by"`
 }
 
-type CatalogWriteProductCategory struct {
+type ProductCategory struct {
 	ProductID  pgtype.UUID        `db:"product_id" json:"product_id"`
 	CategoryID pgtype.UUID        `db:"category_id" json:"category_id"`
 	CreatedAt  pgtype.Timestamptz `db:"created_at" json:"created_at"`
 	CreatedBy  string             `db:"created_by" json:"created_by"`
 }
 
-type CatalogWriteProductProvider struct {
+type ProductProvider struct {
 	ProductID  pgtype.UUID        `db:"product_id" json:"product_id"`
 	ProviderID pgtype.UUID        `db:"provider_id" json:"provider_id"`
 	CreatedAt  pgtype.Timestamptz `db:"created_at" json:"created_at"`
 	CreatedBy  string             `db:"created_by" json:"created_by"`
 }
 
-type CatalogWriteProvider struct {
-	ID         pgtype.UUID                `db:"id" json:"id"`
-	Name       string                     `db:"name" json:"name"`
-	Status     CatalogWriteProviderStatus `db:"status" json:"status"`
-	WebsiteUrl pgtype.Text                `db:"website_url" json:"website_url"`
-	LogoUrl    pgtype.Text                `db:"logo_url" json:"logo_url"`
-	CreatedAt  pgtype.Timestamptz         `db:"created_at" json:"created_at"`
-	CreatedBy  string                     `db:"created_by" json:"created_by"`
-	UpdatedAt  pgtype.Timestamptz         `db:"updated_at" json:"updated_at"`
-	UpdatedBy  pgtype.Text                `db:"updated_by" json:"updated_by"`
-	DeletedAt  pgtype.Timestamptz         `db:"deleted_at" json:"deleted_at"`
-	DeletedBy  pgtype.Text                `db:"deleted_by" json:"deleted_by"`
+type Provider struct {
+	ID         pgtype.UUID        `db:"id" json:"id"`
+	Name       string             `db:"name" json:"name"`
+	Status     ProviderStatus     `db:"status" json:"status"`
+	WebsiteUrl pgtype.Text        `db:"website_url" json:"website_url"`
+	LogoUrl    pgtype.Text        `db:"logo_url" json:"logo_url"`
+	CreatedAt  pgtype.Timestamptz `db:"created_at" json:"created_at"`
+	CreatedBy  string             `db:"created_by" json:"created_by"`
+	UpdatedAt  pgtype.Timestamptz `db:"updated_at" json:"updated_at"`
+	UpdatedBy  pgtype.Text        `db:"updated_by" json:"updated_by"`
+	DeletedAt  pgtype.Timestamptz `db:"deleted_at" json:"deleted_at"`
+	DeletedBy  pgtype.Text        `db:"deleted_by" json:"deleted_by"`
 }
 
-type CatalogWriteProviderRawDatum struct {
-	ID          pgtype.UUID                       `db:"id" json:"id"`
-	Barcode     pgtype.Text                       `db:"barcode" json:"barcode"`
-	Status      CatalogWriteProviderRawDataStatus `db:"status" json:"status"`
-	ProviderID  pgtype.UUID                       `db:"provider_id" json:"provider_id"`
-	RawData     []byte                            `db:"raw_data" json:"raw_data"`
-	FetchedAt   pgtype.Timestamptz                `db:"fetched_at" json:"fetched_at"`
-	ProcessedAt pgtype.Timestamptz                `db:"processed_at" json:"processed_at"`
+type ProviderRawDatum struct {
+	ID          pgtype.UUID           `db:"id" json:"id"`
+	Barcode     pgtype.Text           `db:"barcode" json:"barcode"`
+	Status      ProviderRawDataStatus `db:"status" json:"status"`
+	ProviderID  pgtype.UUID           `db:"provider_id" json:"provider_id"`
+	RawData     []byte                `db:"raw_data" json:"raw_data"`
+	FetchedAt   pgtype.Timestamptz    `db:"fetched_at" json:"fetched_at"`
+	ProcessedAt pgtype.Timestamptz    `db:"processed_at" json:"processed_at"`
 }
 
-type CatalogWriteTag struct {
+type Tag struct {
 	ID         pgtype.UUID        `db:"id" json:"id"`
 	Name       string             `db:"name" json:"name"`
 	ProviderID pgtype.UUID        `db:"provider_id" json:"provider_id"`

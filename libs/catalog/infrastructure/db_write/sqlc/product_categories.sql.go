@@ -3,7 +3,7 @@
 //   sqlc v1.31.1
 // source: product_categories.sql
 
-package db
+package dbwrite
 
 import (
 	"context"
@@ -12,7 +12,7 @@ import (
 )
 
 const createProductCategory = `-- name: CreateProductCategory :one
-INSERT INTO catalog_write.product_categories (product_id, category_id, created_at, created_by)
+INSERT INTO product_categories (product_id, category_id, created_at, created_by)
 VALUES ($1, $2, $3, $4)
 RETURNING product_id, category_id, created_at, created_by
 `
@@ -24,14 +24,14 @@ type CreateProductCategoryParams struct {
 	CreatedBy  string             `db:"created_by" json:"created_by"`
 }
 
-func (q *Queries) CreateProductCategory(ctx context.Context, arg CreateProductCategoryParams) (CatalogWriteProductCategory, error) {
+func (q *Queries) CreateProductCategory(ctx context.Context, arg CreateProductCategoryParams) (ProductCategory, error) {
 	row := q.db.QueryRow(ctx, createProductCategory,
 		arg.ProductID,
 		arg.CategoryID,
 		arg.CreatedAt,
 		arg.CreatedBy,
 	)
-	var i CatalogWriteProductCategory
+	var i ProductCategory
 	err := row.Scan(
 		&i.ProductID,
 		&i.CategoryID,
@@ -42,7 +42,7 @@ func (q *Queries) CreateProductCategory(ctx context.Context, arg CreateProductCa
 }
 
 const removeProductCategory = `-- name: RemoveProductCategory :exec
-DELETE FROM catalog_write.product_categories
+DELETE FROM product_categories
 WHERE product_id = $1 AND category_id = $2
 `
 

@@ -3,7 +3,7 @@
 //   sqlc v1.31.1
 // source: category_tags.sql
 
-package db
+package dbwrite
 
 import (
 	"context"
@@ -12,7 +12,7 @@ import (
 )
 
 const createCategoryTag = `-- name: CreateCategoryTag :one
-INSERT INTO catalog_write.category_tags (category_id, tag_id, created_at, created_by)
+INSERT INTO category_tags (category_id, tag_id, created_at, created_by)
 VALUES ($1, $2, $3, $4)
 RETURNING category_id, tag_id, created_at, created_by
 `
@@ -24,14 +24,14 @@ type CreateCategoryTagParams struct {
 	CreatedBy  string             `db:"created_by" json:"created_by"`
 }
 
-func (q *Queries) CreateCategoryTag(ctx context.Context, arg CreateCategoryTagParams) (CatalogWriteCategoryTag, error) {
+func (q *Queries) CreateCategoryTag(ctx context.Context, arg CreateCategoryTagParams) (CategoryTag, error) {
 	row := q.db.QueryRow(ctx, createCategoryTag,
 		arg.CategoryID,
 		arg.TagID,
 		arg.CreatedAt,
 		arg.CreatedBy,
 	)
-	var i CatalogWriteCategoryTag
+	var i CategoryTag
 	err := row.Scan(
 		&i.CategoryID,
 		&i.TagID,
@@ -42,7 +42,7 @@ func (q *Queries) CreateCategoryTag(ctx context.Context, arg CreateCategoryTagPa
 }
 
 const removeCategoryTag = `-- name: RemoveCategoryTag :exec
-DELETE FROM catalog_write.category_tags
+DELETE FROM category_tags
 WHERE category_id = $1 AND tag_id = $2
 `
 

@@ -3,7 +3,7 @@
 //   sqlc v1.31.1
 // source: brands.sql
 
-package db
+package dbwrite
 
 import (
 	"context"
@@ -12,28 +12,28 @@ import (
 )
 
 const createBrand = `-- name: CreateBrand :one
-INSERT INTO catalog_write.brands (
+INSERT INTO brands (
   id, name, status, logo_url, owner_id, visibility, created_at, created_by, updated_at, updated_by, deleted_at, deleted_by
 ) VALUES ($1, $2, $3, $4, $5, $6, $7, $8, $9, $10, $11, $12)
 RETURNING id, name, status, logo_url, owner_id, visibility, created_at, created_by, updated_at, updated_by, deleted_at, deleted_by
 `
 
 type CreateBrandParams struct {
-	ID         pgtype.UUID                 `db:"id" json:"id"`
-	Name       string                      `db:"name" json:"name"`
-	Status     CatalogWriteBrandStatus     `db:"status" json:"status"`
-	LogoUrl    pgtype.Text                 `db:"logo_url" json:"logo_url"`
-	OwnerID    pgtype.UUID                 `db:"owner_id" json:"owner_id"`
-	Visibility CatalogWriteBrandVisibility `db:"visibility" json:"visibility"`
-	CreatedAt  pgtype.Timestamptz          `db:"created_at" json:"created_at"`
-	CreatedBy  string                      `db:"created_by" json:"created_by"`
-	UpdatedAt  pgtype.Timestamptz          `db:"updated_at" json:"updated_at"`
-	UpdatedBy  pgtype.Text                 `db:"updated_by" json:"updated_by"`
-	DeletedAt  pgtype.Timestamptz          `db:"deleted_at" json:"deleted_at"`
-	DeletedBy  pgtype.Text                 `db:"deleted_by" json:"deleted_by"`
+	ID         pgtype.UUID        `db:"id" json:"id"`
+	Name       string             `db:"name" json:"name"`
+	Status     BrandStatus        `db:"status" json:"status"`
+	LogoUrl    pgtype.Text        `db:"logo_url" json:"logo_url"`
+	OwnerID    pgtype.UUID        `db:"owner_id" json:"owner_id"`
+	Visibility BrandVisibility    `db:"visibility" json:"visibility"`
+	CreatedAt  pgtype.Timestamptz `db:"created_at" json:"created_at"`
+	CreatedBy  string             `db:"created_by" json:"created_by"`
+	UpdatedAt  pgtype.Timestamptz `db:"updated_at" json:"updated_at"`
+	UpdatedBy  pgtype.Text        `db:"updated_by" json:"updated_by"`
+	DeletedAt  pgtype.Timestamptz `db:"deleted_at" json:"deleted_at"`
+	DeletedBy  pgtype.Text        `db:"deleted_by" json:"deleted_by"`
 }
 
-func (q *Queries) CreateBrand(ctx context.Context, arg CreateBrandParams) (CatalogWriteBrand, error) {
+func (q *Queries) CreateBrand(ctx context.Context, arg CreateBrandParams) (Brand, error) {
 	row := q.db.QueryRow(ctx, createBrand,
 		arg.ID,
 		arg.Name,
@@ -48,7 +48,7 @@ func (q *Queries) CreateBrand(ctx context.Context, arg CreateBrandParams) (Catal
 		arg.DeletedAt,
 		arg.DeletedBy,
 	)
-	var i CatalogWriteBrand
+	var i Brand
 	err := row.Scan(
 		&i.ID,
 		&i.Name,
@@ -67,13 +67,13 @@ func (q *Queries) CreateBrand(ctx context.Context, arg CreateBrandParams) (Catal
 }
 
 const getBrandByID = `-- name: GetBrandByID :one
-SELECT id, name, status, logo_url, owner_id, visibility, created_at, created_by, updated_at, updated_by, deleted_at, deleted_by FROM catalog_write.brands
+SELECT id, name, status, logo_url, owner_id, visibility, created_at, created_by, updated_at, updated_by, deleted_at, deleted_by FROM brands
 WHERE id = $1 AND deleted_at IS NULL
 `
 
-func (q *Queries) GetBrandByID(ctx context.Context, id pgtype.UUID) (CatalogWriteBrand, error) {
+func (q *Queries) GetBrandByID(ctx context.Context, id pgtype.UUID) (Brand, error) {
 	row := q.db.QueryRow(ctx, getBrandByID, id)
-	var i CatalogWriteBrand
+	var i Brand
 	err := row.Scan(
 		&i.ID,
 		&i.Name,
@@ -92,7 +92,7 @@ func (q *Queries) GetBrandByID(ctx context.Context, id pgtype.UUID) (CatalogWrit
 }
 
 const listBrands = `-- name: ListBrands :many
-SELECT id, name, status, logo_url, owner_id, visibility, created_at, created_by, updated_at, updated_by, deleted_at, deleted_by FROM catalog_write.brands
+SELECT id, name, status, logo_url, owner_id, visibility, created_at, created_by, updated_at, updated_by, deleted_at, deleted_by FROM brands
 WHERE deleted_at IS NULL
   AND ($1::timestamptz IS NULL OR (created_at, id) < ($1::timestamptz, $2::uuid))
 ORDER BY created_at DESC, id DESC
@@ -105,15 +105,15 @@ type ListBrandsParams struct {
 	PageSize        int32              `db:"page_size" json:"page_size"`
 }
 
-func (q *Queries) ListBrands(ctx context.Context, arg ListBrandsParams) ([]CatalogWriteBrand, error) {
+func (q *Queries) ListBrands(ctx context.Context, arg ListBrandsParams) ([]Brand, error) {
 	rows, err := q.db.Query(ctx, listBrands, arg.CursorCreatedAt, arg.CursorID, arg.PageSize)
 	if err != nil {
 		return nil, err
 	}
 	defer rows.Close()
-	items := []CatalogWriteBrand{}
+	items := []Brand{}
 	for rows.Next() {
-		var i CatalogWriteBrand
+		var i Brand
 		if err := rows.Scan(
 			&i.ID,
 			&i.Name,
@@ -139,7 +139,7 @@ func (q *Queries) ListBrands(ctx context.Context, arg ListBrandsParams) ([]Catal
 }
 
 const softDeleteBrand = `-- name: SoftDeleteBrand :exec
-UPDATE catalog_write.brands SET
+UPDATE brands SET
   deleted_at = $2,
   deleted_by = $3
 WHERE id = $1
@@ -157,7 +157,7 @@ func (q *Queries) SoftDeleteBrand(ctx context.Context, arg SoftDeleteBrandParams
 }
 
 const updateBrand = `-- name: UpdateBrand :one
-UPDATE catalog_write.brands SET
+UPDATE brands SET
   name = $2,
   status = $3,
   logo_url = $4,
@@ -172,19 +172,19 @@ RETURNING id, name, status, logo_url, owner_id, visibility, created_at, created_
 `
 
 type UpdateBrandParams struct {
-	ID         pgtype.UUID                 `db:"id" json:"id"`
-	Name       string                      `db:"name" json:"name"`
-	Status     CatalogWriteBrandStatus     `db:"status" json:"status"`
-	LogoUrl    pgtype.Text                 `db:"logo_url" json:"logo_url"`
-	OwnerID    pgtype.UUID                 `db:"owner_id" json:"owner_id"`
-	Visibility CatalogWriteBrandVisibility `db:"visibility" json:"visibility"`
-	UpdatedAt  pgtype.Timestamptz          `db:"updated_at" json:"updated_at"`
-	UpdatedBy  pgtype.Text                 `db:"updated_by" json:"updated_by"`
-	DeletedAt  pgtype.Timestamptz          `db:"deleted_at" json:"deleted_at"`
-	DeletedBy  pgtype.Text                 `db:"deleted_by" json:"deleted_by"`
+	ID         pgtype.UUID        `db:"id" json:"id"`
+	Name       string             `db:"name" json:"name"`
+	Status     BrandStatus        `db:"status" json:"status"`
+	LogoUrl    pgtype.Text        `db:"logo_url" json:"logo_url"`
+	OwnerID    pgtype.UUID        `db:"owner_id" json:"owner_id"`
+	Visibility BrandVisibility    `db:"visibility" json:"visibility"`
+	UpdatedAt  pgtype.Timestamptz `db:"updated_at" json:"updated_at"`
+	UpdatedBy  pgtype.Text        `db:"updated_by" json:"updated_by"`
+	DeletedAt  pgtype.Timestamptz `db:"deleted_at" json:"deleted_at"`
+	DeletedBy  pgtype.Text        `db:"deleted_by" json:"deleted_by"`
 }
 
-func (q *Queries) UpdateBrand(ctx context.Context, arg UpdateBrandParams) (CatalogWriteBrand, error) {
+func (q *Queries) UpdateBrand(ctx context.Context, arg UpdateBrandParams) (Brand, error) {
 	row := q.db.QueryRow(ctx, updateBrand,
 		arg.ID,
 		arg.Name,
@@ -197,7 +197,7 @@ func (q *Queries) UpdateBrand(ctx context.Context, arg UpdateBrandParams) (Catal
 		arg.DeletedAt,
 		arg.DeletedBy,
 	)
-	var i CatalogWriteBrand
+	var i Brand
 	err := row.Scan(
 		&i.ID,
 		&i.Name,

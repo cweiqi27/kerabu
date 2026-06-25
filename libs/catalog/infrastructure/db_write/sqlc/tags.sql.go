@@ -3,7 +3,7 @@
 //   sqlc v1.31.1
 // source: tags.sql
 
-package db
+package dbwrite
 
 import (
 	"context"
@@ -12,7 +12,7 @@ import (
 )
 
 const createTag = `-- name: CreateTag :one
-INSERT INTO catalog_write.tags (
+INSERT INTO tags (
   id, name, provider_id, created_at, created_by, updated_at, updated_by, deleted_at, deleted_by
 ) VALUES ($1, $2, $3, $4, $5, $6, $7, $8, $9)
 RETURNING id, name, provider_id, created_at, created_by, updated_at, updated_by, deleted_at, deleted_by
@@ -30,7 +30,7 @@ type CreateTagParams struct {
 	DeletedBy  pgtype.Text        `db:"deleted_by" json:"deleted_by"`
 }
 
-func (q *Queries) CreateTag(ctx context.Context, arg CreateTagParams) (CatalogWriteTag, error) {
+func (q *Queries) CreateTag(ctx context.Context, arg CreateTagParams) (Tag, error) {
 	row := q.db.QueryRow(ctx, createTag,
 		arg.ID,
 		arg.Name,
@@ -42,7 +42,7 @@ func (q *Queries) CreateTag(ctx context.Context, arg CreateTagParams) (CatalogWr
 		arg.DeletedAt,
 		arg.DeletedBy,
 	)
-	var i CatalogWriteTag
+	var i Tag
 	err := row.Scan(
 		&i.ID,
 		&i.Name,
@@ -58,13 +58,13 @@ func (q *Queries) CreateTag(ctx context.Context, arg CreateTagParams) (CatalogWr
 }
 
 const getTagByID = `-- name: GetTagByID :one
-SELECT id, name, provider_id, created_at, created_by, updated_at, updated_by, deleted_at, deleted_by FROM catalog_write.tags
+SELECT id, name, provider_id, created_at, created_by, updated_at, updated_by, deleted_at, deleted_by FROM tags
 WHERE id = $1 AND deleted_at IS NULL
 `
 
-func (q *Queries) GetTagByID(ctx context.Context, id pgtype.UUID) (CatalogWriteTag, error) {
+func (q *Queries) GetTagByID(ctx context.Context, id pgtype.UUID) (Tag, error) {
 	row := q.db.QueryRow(ctx, getTagByID, id)
-	var i CatalogWriteTag
+	var i Tag
 	err := row.Scan(
 		&i.ID,
 		&i.Name,
@@ -80,13 +80,13 @@ func (q *Queries) GetTagByID(ctx context.Context, id pgtype.UUID) (CatalogWriteT
 }
 
 const getTagByName = `-- name: GetTagByName :one
-SELECT id, name, provider_id, created_at, created_by, updated_at, updated_by, deleted_at, deleted_by FROM catalog_write.tags
+SELECT id, name, provider_id, created_at, created_by, updated_at, updated_by, deleted_at, deleted_by FROM tags
 WHERE name = $1 AND deleted_at IS NULL
 `
 
-func (q *Queries) GetTagByName(ctx context.Context, name string) (CatalogWriteTag, error) {
+func (q *Queries) GetTagByName(ctx context.Context, name string) (Tag, error) {
 	row := q.db.QueryRow(ctx, getTagByName, name)
-	var i CatalogWriteTag
+	var i Tag
 	err := row.Scan(
 		&i.ID,
 		&i.Name,
@@ -102,7 +102,7 @@ func (q *Queries) GetTagByName(ctx context.Context, name string) (CatalogWriteTa
 }
 
 const listTags = `-- name: ListTags :many
-SELECT id, name, provider_id, created_at, created_by, updated_at, updated_by, deleted_at, deleted_by FROM catalog_write.tags
+SELECT id, name, provider_id, created_at, created_by, updated_at, updated_by, deleted_at, deleted_by FROM tags
 WHERE deleted_at IS NULL
   AND ($1::timestamptz IS NULL OR (created_at, id) < ($1::timestamptz, $2::uuid))
 ORDER BY created_at DESC, id DESC
@@ -115,15 +115,15 @@ type ListTagsParams struct {
 	PageSize        int32              `db:"page_size" json:"page_size"`
 }
 
-func (q *Queries) ListTags(ctx context.Context, arg ListTagsParams) ([]CatalogWriteTag, error) {
+func (q *Queries) ListTags(ctx context.Context, arg ListTagsParams) ([]Tag, error) {
 	rows, err := q.db.Query(ctx, listTags, arg.CursorCreatedAt, arg.CursorID, arg.PageSize)
 	if err != nil {
 		return nil, err
 	}
 	defer rows.Close()
-	items := []CatalogWriteTag{}
+	items := []Tag{}
 	for rows.Next() {
-		var i CatalogWriteTag
+		var i Tag
 		if err := rows.Scan(
 			&i.ID,
 			&i.Name,
@@ -146,7 +146,7 @@ func (q *Queries) ListTags(ctx context.Context, arg ListTagsParams) ([]CatalogWr
 }
 
 const softDeleteTag = `-- name: SoftDeleteTag :exec
-UPDATE catalog_write.tags SET
+UPDATE tags SET
   deleted_at = $2,
   deleted_by = $3
 WHERE id = $1
@@ -164,7 +164,7 @@ func (q *Queries) SoftDeleteTag(ctx context.Context, arg SoftDeleteTagParams) er
 }
 
 const updateTag = `-- name: UpdateTag :one
-UPDATE catalog_write.tags SET
+UPDATE tags SET
   name = $2,
   provider_id = $3,
   updated_at = $4,
@@ -185,7 +185,7 @@ type UpdateTagParams struct {
 	DeletedBy  pgtype.Text        `db:"deleted_by" json:"deleted_by"`
 }
 
-func (q *Queries) UpdateTag(ctx context.Context, arg UpdateTagParams) (CatalogWriteTag, error) {
+func (q *Queries) UpdateTag(ctx context.Context, arg UpdateTagParams) (Tag, error) {
 	row := q.db.QueryRow(ctx, updateTag,
 		arg.ID,
 		arg.Name,
@@ -195,7 +195,7 @@ func (q *Queries) UpdateTag(ctx context.Context, arg UpdateTagParams) (CatalogWr
 		arg.DeletedAt,
 		arg.DeletedBy,
 	)
-	var i CatalogWriteTag
+	var i Tag
 	err := row.Scan(
 		&i.ID,
 		&i.Name,

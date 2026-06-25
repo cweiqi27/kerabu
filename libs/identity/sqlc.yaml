@@ -1,12 +1,25 @@
 version: '2'
 sql:
   - engine: 'postgresql'
-    queries: 'infrastructure/db/queries/'
-    schema: 'infrastructure/db/migrations/'
+    queries: 'infrastructure/db_read/queries/'
+    schema: 'infrastructure/db_read/migrations/'
     gen:
       go:
-        package: 'db'
-        out: 'infrastructure/db/sqlc'
+        package: 'dbread'
+        out: 'infrastructure/db_read/sqlc'
+        sql_package: 'pgx/v5'
+        emit_json_tags: true
+        emit_db_tags: true
+        emit_prepared_queries: false
+        emit_interface: true
+        emit_empty_slices: true
+  - engine: 'postgresql'
+    queries: 'infrastructure/db_write/queries/'
+    schema: 'infrastructure/db_write/migrations/'
+    gen:
+      go:
+        package: 'dbwrite'
+        out: 'infrastructure/db_write/sqlc'
         sql_package: 'pgx/v5'
         emit_json_tags: true
         emit_db_tags: true

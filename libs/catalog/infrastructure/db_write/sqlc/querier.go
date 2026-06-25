@@ -2,7 +2,7 @@
 // versions:
 //   sqlc v1.31.1
 
-package db
+package dbwrite
 
 import (
 	"context"
@@ -11,62 +11,54 @@ import (
 )
 
 type Querier interface {
-	CreateBrand(ctx context.Context, arg CreateBrandParams) (CatalogWriteBrand, error)
-	CreateBrandTag(ctx context.Context, arg CreateBrandTagParams) (CatalogWriteBrandTag, error)
-	CreateCategory(ctx context.Context, arg CreateCategoryParams) (CatalogWriteCategory, error)
-	CreateCategoryTag(ctx context.Context, arg CreateCategoryTagParams) (CatalogWriteCategoryTag, error)
-	CreateIdempotencyKey(ctx context.Context, arg CreateIdempotencyKeyParams) (CatalogWriteIdempotencyKey, error)
-	CreateOutboxArchive(ctx context.Context, arg CreateOutboxArchiveParams) (CatalogWriteOutboxArchive, error)
-	CreateOutboxEvent(ctx context.Context, arg CreateOutboxEventParams) (CatalogWriteOutboxEvent, error)
-	CreateProcessedMessage(ctx context.Context, arg CreateProcessedMessageParams) (CatalogWriteProcessedMessage, error)
-	CreateProduct(ctx context.Context, arg CreateProductParams) (CatalogWriteProduct, error)
-	CreateProductBrand(ctx context.Context, arg CreateProductBrandParams) (CatalogWriteProductBrand, error)
-	CreateProductCategory(ctx context.Context, arg CreateProductCategoryParams) (CatalogWriteProductCategory, error)
-	CreateProductProvider(ctx context.Context, arg CreateProductProviderParams) (CatalogWriteProductProvider, error)
-	CreateProvider(ctx context.Context, arg CreateProviderParams) (CatalogWriteProvider, error)
-	CreateProviderRawData(ctx context.Context, arg CreateProviderRawDataParams) (CatalogWriteProviderRawDatum, error)
-	CreateTag(ctx context.Context, arg CreateTagParams) (CatalogWriteTag, error)
-	GetBrandByID(ctx context.Context, id pgtype.UUID) (CatalogWriteBrand, error)
-	GetCategoryByID(ctx context.Context, id pgtype.UUID) (CatalogWriteCategory, error)
-	GetIdempotencyKeyByID(ctx context.Context, keyID pgtype.UUID) (CatalogWriteIdempotencyKey, error)
-	GetPendingOutboxEvents(ctx context.Context, arg GetPendingOutboxEventsParams) ([]CatalogWriteOutboxEvent, error)
-	GetProcessedMessageByID(ctx context.Context, messageID string) (CatalogWriteProcessedMessage, error)
-	GetProductByBarcode(ctx context.Context, barcode pgtype.Text) (CatalogWriteProduct, error)
-	GetProductByID(ctx context.Context, id pgtype.UUID) (CatalogWriteProduct, error)
-	GetProviderByID(ctx context.Context, id pgtype.UUID) (CatalogWriteProvider, error)
-	GetProviderRawDataByID(ctx context.Context, id pgtype.UUID) (CatalogWriteProviderRawDatum, error)
-	GetTagByID(ctx context.Context, id pgtype.UUID) (CatalogWriteTag, error)
-	GetTagByName(ctx context.Context, name string) (CatalogWriteTag, error)
-	GetViewBrandByID(ctx context.Context, brandID pgtype.UUID) (CatalogReadViewBrand, error)
-	GetViewCategoryByID(ctx context.Context, categoryID pgtype.UUID) (CatalogReadViewCategory, error)
-	GetViewProductByBarcode(ctx context.Context, barcode pgtype.Text) (CatalogReadViewProduct, error)
-	GetViewProductByID(ctx context.Context, productID pgtype.UUID) (CatalogReadViewProduct, error)
-	ListBrands(ctx context.Context, arg ListBrandsParams) ([]CatalogWriteBrand, error)
-	ListCategories(ctx context.Context, arg ListCategoriesParams) ([]CatalogWriteCategory, error)
-	ListProducts(ctx context.Context, arg ListProductsParams) ([]CatalogWriteProduct, error)
-	ListProviders(ctx context.Context, arg ListProvidersParams) ([]CatalogWriteProvider, error)
-	ListTags(ctx context.Context, arg ListTagsParams) ([]CatalogWriteTag, error)
-	ListViewBrands(ctx context.Context, arg ListViewBrandsParams) ([]CatalogReadViewBrand, error)
-	ListViewCategories(ctx context.Context, arg ListViewCategoriesParams) ([]CatalogReadViewCategory, error)
-	ListViewProducts(ctx context.Context, arg ListViewProductsParams) ([]CatalogReadViewProduct, error)
+	CreateBrand(ctx context.Context, arg CreateBrandParams) (Brand, error)
+	CreateBrandTag(ctx context.Context, arg CreateBrandTagParams) (BrandTag, error)
+	CreateCategory(ctx context.Context, arg CreateCategoryParams) (Category, error)
+	CreateCategoryTag(ctx context.Context, arg CreateCategoryTagParams) (CategoryTag, error)
+	CreateIdempotencyKey(ctx context.Context, arg CreateIdempotencyKeyParams) (IdempotencyKey, error)
+	CreateOutboxArchive(ctx context.Context, arg CreateOutboxArchiveParams) (OutboxArchive, error)
+	CreateOutboxEvent(ctx context.Context, arg CreateOutboxEventParams) (OutboxEvent, error)
+	CreateProcessedMessage(ctx context.Context, arg CreateProcessedMessageParams) (ProcessedMessage, error)
+	CreateProduct(ctx context.Context, arg CreateProductParams) (Product, error)
+	CreateProductBrand(ctx context.Context, arg CreateProductBrandParams) (ProductBrand, error)
+	CreateProductCategory(ctx context.Context, arg CreateProductCategoryParams) (ProductCategory, error)
+	CreateProductProvider(ctx context.Context, arg CreateProductProviderParams) (ProductProvider, error)
+	CreateProvider(ctx context.Context, arg CreateProviderParams) (Provider, error)
+	CreateProviderRawData(ctx context.Context, arg CreateProviderRawDataParams) (ProviderRawDatum, error)
+	CreateTag(ctx context.Context, arg CreateTagParams) (Tag, error)
+	GetBrandByID(ctx context.Context, id pgtype.UUID) (Brand, error)
+	GetCategoryByID(ctx context.Context, id pgtype.UUID) (Category, error)
+	GetIdempotencyKeyByID(ctx context.Context, keyID pgtype.UUID) (IdempotencyKey, error)
+	GetPendingOutboxEvents(ctx context.Context, arg GetPendingOutboxEventsParams) ([]OutboxEvent, error)
+	GetProcessedMessageByID(ctx context.Context, messageID string) (ProcessedMessage, error)
+	GetProductByBarcode(ctx context.Context, barcode pgtype.Text) (Product, error)
+	GetProductByID(ctx context.Context, id pgtype.UUID) (Product, error)
+	GetProviderByID(ctx context.Context, id pgtype.UUID) (Provider, error)
+	GetProviderRawDataByID(ctx context.Context, id pgtype.UUID) (ProviderRawDatum, error)
+	GetTagByID(ctx context.Context, id pgtype.UUID) (Tag, error)
+	GetTagByName(ctx context.Context, name string) (Tag, error)
+	ListBrands(ctx context.Context, arg ListBrandsParams) ([]Brand, error)
+	ListCategories(ctx context.Context, arg ListCategoriesParams) ([]Category, error)
+	ListProducts(ctx context.Context, arg ListProductsParams) ([]Product, error)
+	ListProviders(ctx context.Context, arg ListProvidersParams) ([]Provider, error)
+	ListTags(ctx context.Context, arg ListTagsParams) ([]Tag, error)
 	RemoveBrandTag(ctx context.Context, arg RemoveBrandTagParams) error
 	RemoveCategoryTag(ctx context.Context, arg RemoveCategoryTagParams) error
 	RemoveProductBrand(ctx context.Context, arg RemoveProductBrandParams) error
 	RemoveProductCategory(ctx context.Context, arg RemoveProductCategoryParams) error
 	RemoveProductProvider(ctx context.Context, arg RemoveProductProviderParams) error
-	SearchViewProducts(ctx context.Context, arg SearchViewProductsParams) ([]CatalogReadViewProduct, error)
 	SoftDeleteBrand(ctx context.Context, arg SoftDeleteBrandParams) error
 	SoftDeleteCategory(ctx context.Context, arg SoftDeleteCategoryParams) error
 	SoftDeleteProduct(ctx context.Context, arg SoftDeleteProductParams) error
 	SoftDeleteProvider(ctx context.Context, arg SoftDeleteProviderParams) error
 	SoftDeleteTag(ctx context.Context, arg SoftDeleteTagParams) error
-	UpdateBrand(ctx context.Context, arg UpdateBrandParams) (CatalogWriteBrand, error)
-	UpdateCategory(ctx context.Context, arg UpdateCategoryParams) (CatalogWriteCategory, error)
-	UpdateOutboxEventStatus(ctx context.Context, arg UpdateOutboxEventStatusParams) (CatalogWriteOutboxEvent, error)
-	UpdateProduct(ctx context.Context, arg UpdateProductParams) (CatalogWriteProduct, error)
-	UpdateProvider(ctx context.Context, arg UpdateProviderParams) (CatalogWriteProvider, error)
-	UpdateProviderRawDataStatus(ctx context.Context, arg UpdateProviderRawDataStatusParams) (CatalogWriteProviderRawDatum, error)
-	UpdateTag(ctx context.Context, arg UpdateTagParams) (CatalogWriteTag, error)
+	UpdateBrand(ctx context.Context, arg UpdateBrandParams) (Brand, error)
+	UpdateCategory(ctx context.Context, arg UpdateCategoryParams) (Category, error)
+	UpdateOutboxEventStatus(ctx context.Context, arg UpdateOutboxEventStatusParams) (OutboxEvent, error)
+	UpdateProduct(ctx context.Context, arg UpdateProductParams) (Product, error)
+	UpdateProvider(ctx context.Context, arg UpdateProviderParams) (Provider, error)
+	UpdateProviderRawDataStatus(ctx context.Context, arg UpdateProviderRawDataStatusParams) (ProviderRawDatum, error)
+	UpdateTag(ctx context.Context, arg UpdateTagParams) (Tag, error)
 }
 
 var _ Querier = (*Queries)(nil)

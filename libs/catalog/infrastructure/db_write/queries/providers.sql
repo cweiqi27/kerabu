@@ -1,15 +1,15 @@
 -- name: CreateProvider :one
-INSERT INTO catalog_write.providers (
+INSERT INTO providers (
   id, name, status, website_url, logo_url, created_at, created_by, updated_at, updated_by, deleted_at, deleted_by
 ) VALUES ($1, $2, $3, $4, $5, $6, $7, $8, $9, $10, $11)
 RETURNING *;
 
 -- name: GetProviderByID :one
-SELECT * FROM catalog_write.providers
+SELECT * FROM providers
 WHERE id = $1 AND deleted_at IS NULL;
 
 -- name: UpdateProvider :one
-UPDATE catalog_write.providers SET
+UPDATE providers SET
   name = $2,
   status = $3,
   website_url = $4,
@@ -22,13 +22,13 @@ WHERE id = $1
 RETURNING *;
 
 -- name: SoftDeleteProvider :exec
-UPDATE catalog_write.providers SET
+UPDATE providers SET
   deleted_at = $2,
   deleted_by = $3
 WHERE id = $1;
 
 -- name: ListProviders :many
-SELECT * FROM catalog_write.providers
+SELECT * FROM providers
 WHERE deleted_at IS NULL
   AND (sqlc.arg(cursor_created_at)::timestamptz IS NULL OR (created_at, id) < (sqlc.arg(cursor_created_at)::timestamptz, sqlc.arg(cursor_id)::uuid))
 ORDER BY created_at DESC, id DESC

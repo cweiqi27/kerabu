@@ -3,25 +3,46 @@
 	"sourceRoot": "libs/cookbook",
 	"projectType": "library",
 	"targets": {
-		"migrate-create": {
+		"migrate-create-write": {
 			"executor": "nx:run-commands",
 			"options": {
 				"cwd": "libs/cookbook",
-				"command": "migrate create -seq -ext sql -dir infrastructure/db/migrations {args.name}"
+				"command": "migrate create -seq -ext sql -dir infrastructure/db_write/migrations {args.name}"
 			}
 		},
-		"migrate-up": {
+		"migrate-create-read": {
 			"executor": "nx:run-commands",
 			"options": {
 				"cwd": "libs/cookbook",
-				"command": "migrate -database \"$KERABU_POSTGRES_STR?sslmode=disable&x-migrations-table=cookbook_schema_migrations\" -path infrastructure/db/migrations up"
+				"command": "migrate create -seq -ext sql -dir infrastructure/db_read/migrations {args.name}"
 			}
 		},
-		"migrate-down": {
+		"migrate-read-up": {
 			"executor": "nx:run-commands",
 			"options": {
 				"cwd": "libs/cookbook",
-				"command": "migrate -database \"$KERABU_POSTGRES_STR?sslmode=disable&x-migrations-table=cookbook_schema_migrations\" -path infrastructure/db/migrations down"
+				"command": "migrate -database \"$COOKBOOK_READ_POSTGRES_STR?sslmode=disable&x-migrations-table=cookbook_read_schema_migrations\" -path infrastructure/db_read/migrations up"
+			}
+		},
+		"migrate-read-down": {
+			"executor": "nx:run-commands",
+			"options": {
+				"cwd": "libs/cookbook",
+				"command": "migrate -database \"$COOKBOOK_READ_POSTGRES_STR?sslmode=disable&x-migrations-table=cookbook_read_schema_migrations\" -path infrastructure/db_read/migrations down"
+			}
+		},
+		"migrate-write-up": {
+			"executor": "nx:run-commands",
+			"options": {
+				"cwd": "libs/cookbook",
+				"command": "migrate -database \"$COOKBOOK_WRITE_POSTGRES_STR?sslmode=disable&x-migrations-table=cookbook_write_schema_migrations\" -path infrastructure/db_write/migrations up"
+			}
+		},
+		"migrate-write-down": {
+			"executor": "nx:run-commands",
+			"options": {
+				"cwd": "libs/cookbook",
+				"command": "migrate -database \"$COOKBOOK_WRITE_POSTGRES_STR?sslmode=disable&x-migrations-table=cookbook_write_schema_migrations\" -path infrastructure/db_write/migrations down"
 			}
 		},
 		"sqlc-generate": {
@@ -29,13 +50,6 @@
 			"options": {
 				"cwd": "libs/cookbook",
 				"command": "sqlc generate"
-			}
-		},
-		"echo-test": {
-			"executor": "nx:run-commands",
-			"options": {
-				"cwd": "libs/cookbook",
-				"command": "echo $KERABU_POSTGRES_STR"
 			}
 		}
 	}

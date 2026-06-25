@@ -3,7 +3,7 @@
 //   sqlc v1.31.1
 // source: product_providers.sql
 
-package db
+package dbwrite
 
 import (
 	"context"
@@ -12,7 +12,7 @@ import (
 )
 
 const createProductProvider = `-- name: CreateProductProvider :one
-INSERT INTO catalog_write.product_providers (product_id, provider_id, created_at, created_by)
+INSERT INTO product_providers (product_id, provider_id, created_at, created_by)
 VALUES ($1, $2, $3, $4)
 RETURNING product_id, provider_id, created_at, created_by
 `
@@ -24,14 +24,14 @@ type CreateProductProviderParams struct {
 	CreatedBy  string             `db:"created_by" json:"created_by"`
 }
 
-func (q *Queries) CreateProductProvider(ctx context.Context, arg CreateProductProviderParams) (CatalogWriteProductProvider, error) {
+func (q *Queries) CreateProductProvider(ctx context.Context, arg CreateProductProviderParams) (ProductProvider, error) {
 	row := q.db.QueryRow(ctx, createProductProvider,
 		arg.ProductID,
 		arg.ProviderID,
 		arg.CreatedAt,
 		arg.CreatedBy,
 	)
-	var i CatalogWriteProductProvider
+	var i ProductProvider
 	err := row.Scan(
 		&i.ProductID,
 		&i.ProviderID,
@@ -42,7 +42,7 @@ func (q *Queries) CreateProductProvider(ctx context.Context, arg CreateProductPr
 }
 
 const removeProductProvider = `-- name: RemoveProductProvider :exec
-DELETE FROM catalog_write.product_providers
+DELETE FROM product_providers
 WHERE product_id = $1 AND provider_id = $2
 `
 

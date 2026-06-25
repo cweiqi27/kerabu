@@ -3,25 +3,32 @@
 	"sourceRoot": "libs/catalog",
 	"projectType": "library",
 	"targets": {
-		"migrate-create": {
+		"migrate-create-write": {
 			"executor": "nx:run-commands",
 			"options": {
 				"cwd": "libs/catalog",
-				"command": "migrate create -seq -ext sql -dir infrastructure/kerabu/migrations {args.name}"
+				"command": "migrate create -seq -ext sql -dir infrastructure/db_write/migrations {args.name}"
+			}
+		},
+		"migrate-create-read": {
+			"executor": "nx:run-commands",
+			"options": {
+				"cwd": "libs/catalog",
+				"command": "migrate create -seq -ext sql -dir infrastructure/db_read/migrations {args.name}"
 			}
 		},
 		"migrate-up": {
 			"executor": "nx:run-commands",
 			"options": {
 				"cwd": "libs/catalog",
-				"command": "migrate -database \"$KERABU_POSTGRES_STR?sslmode=disable&x-migrations-table=catalog_schema_migrations\" -path infrastructure/db/migrations up"
+				"command": "migrate -database \"$CATALOG_READ_POSTGRES_STR\" -path infrastructure/db_read/migrations up && migrate -database \"$CATALOG_WRITE_POSTGRES_STR\" -path infrastructure/db_write/migrations up"
 			}
 		},
 		"migrate-down": {
 			"executor": "nx:run-commands",
 			"options": {
 				"cwd": "libs/catalog",
-				"command": "migrate -database \"$KERABU_POSTGRES_STR?sslmode=disable&x-migrations-table=catalog_schema_migrations\" -path infrastructure/db/migrations down"
+				"command": "migrate -database \"$CATALOG_READ_POSTGRES_STR\" -path infrastructure/db_read/migrations down && migrate -database \"$CATALOG_WRITE_POSTGRES_STR\" -path infrastructure/db_write/migrations down"
 			}
 		},
 		"sqlc-generate": {
